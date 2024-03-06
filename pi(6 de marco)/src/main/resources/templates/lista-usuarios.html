@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuários</title>
+    <link rel="stylesheet" th:href="@{/bootstrap-5.3.3-dist/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div class="container">
+    <h2>Lista de Usuários</h2>
+    <div class="row mb-3">
+        <div class="col text-end">
+            <!-- Campo de pesquisa de usuário por nome -->
+            <div class="input-group">
+                <input type="text" id="nome" name="nome" class="form-control" placeholder="Digite o nome do usuário">
+                <button class="btn btn-primary" type="button" onclick="pesquisarUsuario()">Pesquisar</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <!-- Botão para listar todos os usuários -->
+            <a th:href="@{/usuario/listar}" class="btn btn-secondary">Listar Todos</a>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Grupo</th>
+                <th>Status</th>
+                <th>Ações</th>
+                <th></th> <!-- Espaço para o ícone de adicionar usuário -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.id}"></td>
+                <td th:text="${usuario.nome}"></td>
+                <td th:text="${usuario.email}"></td>
+                <td th:text="${usuario.grupo}"></td>
+                <td th:text="${usuario.status} ? 'Ativo' : 'Inativo'"></td>
+                <td>
+                    <!-- Botão para editar o usuário -->
+                    <a th:href="@{'/usuario/editar/' + ${usuario.id}}"><button type="button" class="btn btn-primary">Editar</button></a>
+                    <!-- Formulário para excluir o usuário -->
+                                        <!-- nao sera necessario o botao de excluir 
+
+                    <form th:action="@{/usuario/excluir}" method="post" style="display: inline;" onsubmit="return confirmarExclusao()">
+                        
+                        <input type="hidden" name="id" th:value="${usuario.id}"/>
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form> -->
+                    <!-- Formulário para mudar o status do usuário -->
+                    <form th:action="@{/usuario/mudar-status}" method="post" style="display: inline;" onsubmit="return confirmarMudancaStatus()">
+                        <input type="hidden" name="id" th:value="${usuario.id}"/>
+                        <button type="submit" class="btn btn-warning">Mudar Status</button>
+                    </form>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <a th:href="@{/usuario/novo}" style="text-decoration: none; color: inherit;"><span style="font-size: 24px; cursor: pointer;">&#43;</span>Adicionar Usuario</a>
+        </tbody>
+    </table>
+</div>
+
+<!-- Importação do jQuery e Bootstrap JS -->
+<script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.min.js}"></script>
+
+<!-- Script JavaScript para confirmar a exclusão -->
+<script>
+    function confirmarExclusao() {
+        if (confirm("Tem certeza de que deseja excluir este usuário?")) {
+            document.getElementById("formExcluir").submit();
+        }
+    }
+
+    function confirmarMudancaStatus() {
+        return confirm("Tem certeza de que deseja mudar o status deste usuário?");
+    }
+
+    function pesquisarUsuario() {
+        var nomeUsuario = document.getElementById("nome").value;
+        // Lógica para redirecionar para a página de pesquisa com o nome do usuário
+        window.location.href = "/usuario/pesquisar?nome=" + nomeUsuario;
+    }
+
+    // Verifica se a lista de usuários está vazia e exibe uma mensagem se estiver
+    window.onload = function() {
+        var usuarios = document.getElementsByTagName("tr");
+        if (usuarios.length === 1) { // Se não houver linhas na tabela, significa que não foram encontrados usuários
+            alert("Não foram encontrados usuários com este nome.");
+        }
+    }
+</script>
+
+</body>
+</html>
