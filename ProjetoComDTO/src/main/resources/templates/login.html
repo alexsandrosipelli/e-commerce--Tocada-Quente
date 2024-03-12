@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <form action="/paginaInicial" method="post">
+            <label for="email">Email:</label><br>
+            <input type="text" id="email" name="email"><br>
+            <label for="senha">Senha:</label><br>
+            <input type="password" id="senha" name="senha"><br><br>
+            <input type="submit" value="Login">
+        </form>
+    </body>
+    <!-- Adicione esta seção ao seu arquivo login.html -->
+    <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+    </div>
+
+</html>
