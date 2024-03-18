@@ -1,30 +1,39 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.service;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ProdutoRepository;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.data.domain.Sort;
-
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.ImagemProdutoRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
 
-    private static final String UPLOAD_DIR = "C:\\Users\\alexs\\OneDrive\\Área de Trabalho\\projeto atualizado via github\\Projeto-Integrador-2024\\imagens";
+    private static final String UPLOAD_DIR = "C:\\Users\\alexs\\OneDrive\\Área de Trabalho\\projeto atualizado via github\\Projeto-Integrador-2024\\ProjetoComDTO\\src\\main\\resources\\imagens";
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private ImagemProdutoRepository imagemProdutoRepository;
+
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public Page<ProdutoDTO> listarProdutosPorNomePaginado(String keyword, Pageable pageable) {
         Page<ProdutoEntity> produtosPage;
@@ -36,72 +45,76 @@ public class ProdutoService {
         return produtosPage.map(this::toDTO);
     }
 
-    // Método para converter de ProdutoEntity para ProdutoDTO
-    private ProdutoDTO toDTO(ProdutoEntity produtoEntity) {
-        ProdutoDTO produtoDTO = new ProdutoDTO();
-        produtoDTO.setId(produtoEntity.getId());
-        produtoDTO.setNome(produtoEntity.getNome());
-        produtoDTO.setAvaliacao(produtoEntity.getAvaliacao());
-        produtoDTO.setDescricaoDetalhada(produtoEntity.getDescricaoDetalhada());
-        produtoDTO.setPreco(produtoEntity.getPreco());
-        produtoDTO.setQtdEstoque(produtoEntity.getQtdEstoque());
-        produtoDTO.setStatus(produtoEntity.isStatus());
-        return produtoDTO;
+    @Transactional
+    public void criarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
+        // Salvar o produto primeiro para obter o ID gerado automaticamente
+        ProdutoEntity produtoEntity = produtoRepository.save(produtoDTO.toEntity());
+
+        // Verificar se o ID do produto não é nulo após salvá-lo
+        if (produtoEntity.getId() != null) {
+            // Salvar as imagens associadas ao produto
+            salvarImagensProduto(produtoEntity, imagens);
+        } else {
+            // Lidar com o ID nulo, se necessário
+            // Aqui você pode lançar uma exceção, registrar um erro, ou realizar alguma outra ação adequada ao seu caso
+            throw new IllegalArgumentException("O ID do produto não pode ser nulo após a criação.");
+        }
     }
 
-    public void criarProduto(ProdutoDTO produtoDTO) {
-        // Converter ProdutoDTO para ProdutoEntity
-        ProdutoEntity produtoEntity = new ProdutoEntity();
-        produtoEntity.setNome(produtoDTO.getNome());
-        produtoEntity.setAvaliacao(produtoDTO.getAvaliacao());
-        produtoEntity.setDescricaoDetalhada(produtoDTO.getDescricaoDetalhada());
-        produtoEntity.setPreco(produtoDTO.getPreco());
-        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
-        produtoEntity.setStatus(produtoDTO.isStatus());
+    private void salvarImagensProduto(ProdutoEntity produtoEntity, List<MultipartFile> imagens) throws IOException {
+        // Salvar as imagens no diretório e obter os caminhos salvos
+        String[] caminhosImagens = salvarImagens(imagens);
 
-        // Associar imagens ao produto
-        List<ImagemProdutoEntity> imagens = produtoDTO.getCaminhosImagens().stream()
+        // Converter os caminhos das imagens em entidades ImagemProdutoEntity
+        List<ImagemProdutoEntity> imagensEntities = Arrays.stream(caminhosImagens)
                 .map(caminho -> {
-                    ImagemProdutoEntity imagem = new ImagemProdutoEntity();
-                    imagem.setCaminho(caminho);
-                    imagem.setPrincipal(produtoDTO.getImagemPrincipal() != null && caminho.equals(produtoDTO.getImagemPrincipal()));
-                    imagem.setProduto(produtoEntity);
-                    return imagem;
+                    ImagemProdutoEntity imagemEntity = new ImagemProdutoEntity();
+                    imagemEntity.setCaminho(caminho);
+                    imagemEntity.setProduto(produtoEntity); // Associar imagem ao produto
+
+                    return imagemEntity;
                 })
                 .collect(Collectors.toList());
 
-        produtoEntity.setImagens(imagens);
-
-        // Salvar o produto no banco de dados
-        produtoRepository.save(produtoEntity);
+        // Salvar as entidades ImagemProdutoEntity no banco de dados
+        imagemProdutoRepository.saveAll(imagensEntities);
     }
 
-    public String[] salvarImagens(List<MultipartFile> imagens) {
+    private String[] salvarImagens(List<MultipartFile> imagens) throws IOException {
         List<String> caminhosImagens = new ArrayList<>();
 
         // Percorre cada imagem enviada
         for (MultipartFile imagem : imagens) {
-            try {
-                // Gera um nome único para a imagem
-                String nomeImagem = System.currentTimeMillis() + "_" + imagem.getOriginalFilename();
+            // Gera um nome único para a imagem
+            String nomeImagem = System.currentTimeMillis() + "_" + imagem.getOriginalFilename();
 
-                // Cria o caminho completo para salvar a imagem
-                String caminhoImagem = UPLOAD_DIR + File.separator + nomeImagem;
+            // Cria o caminho completo para salvar a imagem
+            String caminhoImagem = UPLOAD_DIR + File.separator + nomeImagem;
 
-                // Salva a imagem no diretório
-                imagem.transferTo(new File(caminhoImagem));
+            // Salva a imagem no diretório
+            imagem.transferTo(new File(caminhoImagem));
 
-                // Adiciona o caminho da imagem à lista de caminhos
-                caminhosImagens.add(caminhoImagem);
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Lida com erros de IO, se necessário
-            }
+            // Adiciona o caminho da imagem à lista de caminhos
+            caminhosImagens.add(caminhoImagem);
         }
 
         // Converte a lista de caminhos para um array de strings
         return caminhosImagens.toArray(new String[0]);
     }
 
-    // Outros métodos do serviço, como criarProduto, alterarProduto, etc.
+    private ProdutoDTO toDTO(ProdutoEntity produtoEntity) {
+        return modelMapper.map(produtoEntity, ProdutoDTO.class);
+    }
+
+    @Transactional
+    public void mudarStatusProduto(Long id) {
+        ProdutoEntity produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + id));
+
+        // Altera o status do produto
+        produto.setStatus(!produto.isStatus());
+
+        // Salva as alterações no banco de dados
+        produtoRepository.save(produto);
+    }
 }

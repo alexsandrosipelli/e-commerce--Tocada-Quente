@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cadastro de Produto</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <div class="container mt-5">
+            <h2 class="mb-4">Cadastro de Produto</h2>
+            <form id="cadastroProdutoForm" action="/criarproduto" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="avaliacao">Avaliação:</label>
+                    <input type="number" class="form-control" id="avaliacao" name="avaliacao" step="0.5" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição Detalhada:</label>
+                    <textarea class="form-control" id="descricaoDetalhada" name="descricaoDetalhada" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="preco">Preço:</label>
+                    <input type="number" class="form-control" id="precoProduto" name="precoProduto" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="estoque">Quantidade em Estoque:</label>
+                    <input type="number" class="form-control" id="qtdEstoque" name="qtdEstoque" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="imagens">Selecione as imagens:</label>
+                    <input type="file" class="form-control-file" id="imagens" name="imagens" multiple required>
+                </div>
+                <div class="form-group">
+                    <label for="imagemPrincipal">Escolha a imagem principal:</label>
+                    <select class="form-control" id="imagemPrincipal" name="imagemPrincipal" required>
+                        <option value="">Selecione...</option>
+                        <!-- Opções das imagens serão preenchidas dinamicamente com JavaScript -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+        </div>
+
+        <!-- Bootstrap JS and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- JavaScript para preencher dinamicamente as opções das imagens principais -->
+        <script>
+            $(document).ready(function () {
+                // Ao selecionar as imagens, preenche as opções de imagem principal
+                $('#imagens').change(function () {
+                    $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
+                    $.each(this.files, function (index, file) {
+                        $('#imagemPrincipal').append($('<option>', {
+                            value: index,
+                            text: file.name
+                        }));
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

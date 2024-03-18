@@ -23,20 +23,20 @@ public class ProdutoEntity {
     @Column(name = "nome", length = 200, nullable = false)
     private String nome;
 
-    @Column(name = "avaliacao")
+    @Column(name = "avaliacao", nullable = false)
     private double avaliacao;
 
     @Column(name = "descricao_detalhada", length = 2000)
     private String descricaoDetalhada;
 
-    @Column(name = "preco", precision = 10, scale = 2, nullable = false)
-    private BigDecimal preco;
+    @Column(name = "preco_produto", precision = 10, scale = 2, nullable = false)
+    private BigDecimal precoProduto;
 
-    @Column(name = "qtd_estoque")
+    @Column(name = "qtd_estoque", nullable = false)
     private int qtdEstoque;
-
     @Column(name = "status", nullable = false)
     private boolean status;
+    @Column(name = "imagemPrincipal", nullable = false)
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImagemProdutoEntity> imagens = new ArrayList<>();
@@ -85,12 +85,12 @@ public class ProdutoEntity {
         this.descricaoDetalhada = descricaoDetalhada;
     }
 
-    public BigDecimal getPreco() {
-        return preco;
+    public BigDecimal getPrecoProduto() {
+        return precoProduto;
     }
 
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
+    public void setPrecoProduto(BigDecimal precoProduto) {
+        this.precoProduto = precoProduto;
     }
 
     public int getQtdEstoque() {
@@ -101,19 +101,19 @@ public class ProdutoEntity {
         this.qtdEstoque = qtdEstoque;
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public List<ImagemProdutoEntity> getImagens() {
         return imagens;
     }
 
     public void setImagens(List<ImagemProdutoEntity> imagens) {
         this.imagens = imagens;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }
