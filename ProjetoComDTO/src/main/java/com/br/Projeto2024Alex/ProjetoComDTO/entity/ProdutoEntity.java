@@ -29,7 +29,11 @@ public class ProdutoEntity {
     @Column(name = "descricao_detalhada", length = 2000)
     private String descricaoDetalhada;
 
+<<<<<<< HEAD
     @Column(name = "precoproduto", precision = 10, scale = 2, nullable = false)
+=======
+    @Column(name = "preco_produto", precision = 10, scale = 2, nullable = false)
+>>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
     private BigDecimal precoProduto;
 
     @Column(name = "qtd_estoque", nullable = false)

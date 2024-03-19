@@ -30,7 +30,10 @@ public class ProdutoDTO {
 
     public ProdutoEntity toEntity() {
         return modelMapper.map(this, ProdutoEntity.class);
+<<<<<<< HEAD
         
+=======
+>>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
     }
 
     public ProdutoDTO fromEntity(ProdutoEntity produtoEntity) {

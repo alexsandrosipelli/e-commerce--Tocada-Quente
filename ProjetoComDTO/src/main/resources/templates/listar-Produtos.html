@@ -58,7 +58,11 @@
                     </form>
                 </th:block>
                 <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
+<<<<<<< HEAD
                     <a th:href="@{/produtos/{id}(id=${produto.id})}" class="btn btn-secondary btn-action">Visualizar</a>
+=======
+                    <a th:href="@{/produtos/visualizar/{id}(id=${produto.id})}" class="btn btn-secondary btn-action">Visualizar</a>
+>>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
                 </th:block>
                 </td>
                 </tr>
