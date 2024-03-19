@@ -4,85 +4,37 @@
  */
 package com.br.Projeto2024Alex.ProjetoComDTO.dto;
 
-/**
- *
- * @author alexs
- */
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProdutoDTO {
+
+    @Autowired
+    private ModelMapper modelMapper = new ModelMapper();
 
     private Long id;
     private String nome;
     private double avaliacao;
     private String descricaoDetalhada;
-    private BigDecimal preco;
+    private BigDecimal precoProduto;
     private int qtdEstoque;
     private boolean status;
-    private List<String> caminhosImagens; // Lista de caminhos das imagens associadas ao produto
-    private String imagemPrincipal; // Ca
-    // Construtores
+   
 
-    public ProdutoDTO() {
-    }
-
-    public ProdutoDTO(Long id, String nome, double avaliacao, String descricaoDetalhada, BigDecimal preco, int qtdEstoque, boolean status) {
-        this.id = id;
-        this.nome = nome;
-        this.avaliacao = avaliacao;
-        this.descricaoDetalhada = descricaoDetalhada;
-        this.preco = preco;
-        this.qtdEstoque = qtdEstoque;
-        this.status = status;
-    }
-
-    public static ProdutoDTO fromEntity(ProdutoEntity entity) {
-        ProdutoDTO dto = new ProdutoDTO();
-        dto.setId(entity.getId());
-        dto.setNome(entity.getNome());
-        dto.setAvaliacao(entity.getAvaliacao());
-        dto.setDescricaoDetalhada(entity.getDescricaoDetalhada());
-        dto.setPreco(entity.getPreco());
-        dto.setQtdEstoque(entity.getQtdEstoque());
-        dto.setStatus(entity.isStatus());
-        return dto;
-    }
-
-    public static List<ProdutoDTO> fromEntityList(List<ProdutoEntity> entities) {
-        return entities.stream()
-                .map(ProdutoDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
+    @Valid
+    private List<ImagemProdutoDTO> imagens;
 
     public ProdutoEntity toEntity() {
-        ProdutoEntity entity = new ProdutoEntity();
-        entity.setId(this.getId());
-        entity.setNome(this.getNome());
-        entity.setAvaliacao(this.getAvaliacao());
-        entity.setDescricaoDetalhada(this.getDescricaoDetalhada());
-        entity.setPreco(this.getPreco());
-        entity.setQtdEstoque(this.getQtdEstoque());
-        entity.setStatus(this.isStatus());
-        return entity;
+        return modelMapper.map(this, ProdutoEntity.class);
+        
     }
 
-    public List<String> getCaminhosImagens() {
-        return caminhosImagens;
-    }
-
-    public void setCaminhosImagens(List<String> caminhosImagens) {
-        this.caminhosImagens = caminhosImagens;
-    }
-
-    public String getImagemPrincipal() {
-        return imagemPrincipal;
-    }
-
-    public void setImagemPrincipal(String imagemPrincipal) {
-        this.imagemPrincipal = imagemPrincipal;
+    public ProdutoDTO fromEntity(ProdutoEntity produtoEntity) {
+        return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
 
     // Getters e Setters
@@ -118,12 +70,12 @@ public class ProdutoDTO {
         this.descricaoDetalhada = descricaoDetalhada;
     }
 
-    public BigDecimal getPreco() {
-        return preco;
+    public BigDecimal getPrecoProduto() {
+        return precoProduto;
     }
 
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
+    public void setPrecoProduto(BigDecimal precoProduto) {
+        this.precoProduto = precoProduto;
     }
 
     public int getQtdEstoque() {
@@ -140,5 +92,15 @@ public class ProdutoDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+ 
+
+    public List<ImagemProdutoDTO> getImagens() {
+        return imagens;
+    }
+
+    public void setImagens(List<ImagemProdutoDTO> imagens) {
+        this.imagens = imagens;
     }
 }

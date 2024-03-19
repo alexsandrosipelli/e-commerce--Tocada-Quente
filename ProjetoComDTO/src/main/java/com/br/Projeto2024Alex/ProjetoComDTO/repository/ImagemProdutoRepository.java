@@ -1,16 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.br.Projeto2024Alex.ProjetoComDTO.repository;
 
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author alexs
- */
-public interface ImagemProdutoRepository extends JpaRepository<ProdutoEntity, Long> {
+import java.util.List;
 
+public interface ImagemProdutoRepository extends JpaRepository<ImagemProdutoEntity, Long> {
+    
+    ImagemProdutoEntity save(ImagemProdutoEntity imagem);
 }

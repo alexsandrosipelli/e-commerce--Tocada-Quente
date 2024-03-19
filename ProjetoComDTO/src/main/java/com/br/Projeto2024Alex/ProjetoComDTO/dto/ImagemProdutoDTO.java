@@ -4,26 +4,34 @@
  */
 package com.br.Projeto2024Alex.ProjetoComDTO.dto;
 
-/**
- *
- * @author alexs
- */
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
+import org.modelmapper.ModelMapper;
+
 public class ImagemProdutoDTO {
 
     private Long id;
     private String caminho;
     private boolean principal;
-    private Long produtoId; // ID do produto associado à imagem
+    private Long produtoId; // Id do produto associado à imagem
+    private byte[] dadosImagem;
 
-    public ImagemProdutoDTO() {
+    public ImagemProdutoEntity toEntity() {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(this, ImagemProdutoEntity.class);
     }
 
-    // Construtor com todos os atributos
-    public ImagemProdutoDTO(Long id, String caminho, boolean principal, Long produtoId) {
-        this.id = id;
-        this.caminho = caminho;
-        this.principal = principal;
-        this.produtoId = produtoId;
+    public static ImagemProdutoDTO fromEntity(ImagemProdutoEntity imagemProdutoEntity) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(imagemProdutoEntity, ImagemProdutoDTO.class);
+    }
+
+    public byte[] getDadosImagem() {
+        return dadosImagem;
+    }
+
+    // Getters e Setters
+    public void setDadosImagem(byte[] dadosImagem) {
+        this.dadosImagem = dadosImagem;
     }
 
     public Long getId() {
@@ -57,5 +65,4 @@ public class ImagemProdutoDTO {
     public void setProdutoId(Long produtoId) {
         this.produtoId = produtoId;
     }
-
 }

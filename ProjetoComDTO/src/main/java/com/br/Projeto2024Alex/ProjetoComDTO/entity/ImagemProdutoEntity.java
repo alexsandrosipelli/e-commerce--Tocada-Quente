@@ -1,5 +1,6 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.entity;
 
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ public class ImagemProdutoEntity {
     @JoinColumn(name = "produto_id", nullable = false)
     private ProdutoEntity produto;
 
+    // outros atributos e métodos
     // Getters e setters
     public Long getId() {
         return id;
@@ -58,5 +60,14 @@ public class ImagemProdutoEntity {
 
     public void setProduto(ProdutoEntity produto) {
         this.produto = produto;
+    }
+
+    public ImagemProdutoDTO toDTO() {
+        ImagemProdutoDTO imagemProdutoDTO = new ImagemProdutoDTO();
+        imagemProdutoDTO.setId(this.id);
+        imagemProdutoDTO.setCaminho(this.caminho);
+        imagemProdutoDTO.setPrincipal(this.principal);
+        // Não é necessário definir o ProdutoEntity no DTO, a menos que seja necessário
+        return imagemProdutoDTO;
     }
 }

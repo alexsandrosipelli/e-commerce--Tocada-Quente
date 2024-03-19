@@ -4,11 +4,13 @@ import com.br.Projeto2024Alex.ProjetoComDTO.dto.UsuarioDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.HashMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
