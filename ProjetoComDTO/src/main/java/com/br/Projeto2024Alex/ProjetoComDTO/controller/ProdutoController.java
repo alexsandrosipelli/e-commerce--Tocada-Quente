@@ -23,10 +23,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import org.springframework.data.domain.Sort;
-<<<<<<< HEAD
+
 import org.springframework.web.bind.annotation.PathVariable;
-=======
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -62,13 +61,12 @@ public class ProdutoController {
     public String criarProduto(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO,
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens) throws IOException {
-<<<<<<< HEAD
-//        if (result.hasErrors()) {
-//
-//            System.out.println("teve erros" + result.getAllErrors());
-//            return "criarproduto";
-//        }
 
+        if (result.hasErrors()) {
+
+            System.out.println("teve erros" + result.getAllErrors());
+            return "criarproduto";
+        }
         produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
 
         return "redirect:/produtos";
@@ -96,29 +94,4 @@ public class ProdutoController {
         return "VisualizarProduto";
     }
 
-=======
-        if (result.hasErrors()) {
-
-            System.out.println("teve erros" + result.getAllErrors());
-            return "criarproduto";
-        }
-
-        produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
-
-        return "redirect:/produtos";
-    }
-
-    /*Alterar status produto*/
-    @PostMapping("/produtos/mudar-status") // Mapeado para requisições POST
-    public String mudarStatusProduto(@RequestParam Long id, RedirectAttributes attributes) {
-        try {
-            // Chama o método da service para mudar o status do produto
-            produtoService.mudarStatusProduto(id);
-            attributes.addFlashAttribute("mensagem", "Produto alterado com sucesso!");
-        } catch (EntityNotFoundException ex) {
-            attributes.addFlashAttribute("mensagem", "Produto não encontrado!");
-        }
-        return "redirect:/produtos";
-    }
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
 }

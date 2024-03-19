@@ -25,11 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProdutoService {
 
-<<<<<<< HEAD
     private static final String UPLOAD_DIR = "src/main/resources/imagem";
-=======
-    private static final String UPLOAD_DIR = "C:\\Users\\alexs\\OneDrive\\Área de Trabalho\\projeto atualizado via github\\Projeto-Integrador-2024\\ProjetoComDTO\\src\\main\\resources\\imagens";
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -102,22 +98,17 @@ public class ProdutoService {
             String nomeImagem = System.currentTimeMillis() + "_" + imagem.getOriginalFilename();
 
             // Cria o caminho completo para salvar a imagem
-<<<<<<< HEAD
             String caminhoImagem = absoluteUploadPath + File.separator + nomeImagem;
-=======
-            String caminhoImagem = UPLOAD_DIR + File.separator + nomeImagem;
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
 
             // Salva a imagem no diretório
             imagem.transferTo(new File(caminhoImagem));
 
-<<<<<<< HEAD
             // Adiciona o caminho relativo da imagem à lista de caminhos
             caminhosImagens.add("imagens/" + nomeImagem); // Caminho relativo para ser usado na visualização
-=======
+
             // Adiciona o caminho da imagem à lista de caminhos
             caminhosImagens.add(caminhoImagem);
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
+
         }
 
         // Converte a lista de caminhos para um array de strings
@@ -139,7 +130,6 @@ public class ProdutoService {
         // Salva as alterações no banco de dados
         produtoRepository.save(produto);
     }
-<<<<<<< HEAD
 
     public ProdutoDTO buscarProdutoPorId(Long id) {
         ProdutoEntity produtoEntity = produtoRepository.findById(id)
@@ -147,6 +137,5 @@ public class ProdutoService {
 
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
-=======
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
+
 }

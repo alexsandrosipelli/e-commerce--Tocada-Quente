@@ -23,17 +23,13 @@ public class ProdutoDTO {
     private BigDecimal precoProduto;
     private int qtdEstoque;
     private boolean status;
-   
 
     @Valid
     private List<ImagemProdutoDTO> imagens;
 
     public ProdutoEntity toEntity() {
         return modelMapper.map(this, ProdutoEntity.class);
-<<<<<<< HEAD
-        
-=======
->>>>>>> dd5f20dbef0f4f68c70097ac6b22866add5e5879
+
     }
 
     public ProdutoDTO fromEntity(ProdutoEntity produtoEntity) {
@@ -96,8 +92,6 @@ public class ProdutoDTO {
     public void setStatus(boolean status) {
         this.status = status;
     }
-
- 
 
     public List<ImagemProdutoDTO> getImagens() {
         return imagens;
