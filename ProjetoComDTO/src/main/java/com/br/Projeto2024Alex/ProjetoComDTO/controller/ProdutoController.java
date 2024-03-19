@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 
@@ -33,6 +34,8 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
+    private static final String UPLOAD_DIR = "src/main/resources/imagem";
+
 
     /*listar os produtos*/
     @GetMapping("/produtos")
@@ -62,11 +65,11 @@ public class ProdutoController {
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens) throws IOException {
 
-        if (result.hasErrors()) {
-
-            System.out.println("teve erros" + result.getAllErrors());
-            return "criarproduto";
-        }
+//        if (result.hasErrors()) {
+//
+//            System.out.println("teve erros" + result.getAllErrors());
+//            return "criarproduto";
+//        }
         produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
 
         return "redirect:/produtos";
@@ -88,10 +91,22 @@ public class ProdutoController {
     @GetMapping("/produtos/{id}")
     public String visualizarProduto(@PathVariable Long id, Model model) {
         ProdutoDTO produto = produtoService.buscarProdutoPorId(id);
-        model.addAttribute("produto", produto);
-        model.addAttribute("imagens", produto.getImagens()); // Adicionar a lista de imagens ao modelo
 
-        return "VisualizarProduto";
+        if (produto != null) {
+            model.addAttribute("produto", produto);
+
+            if (!produto.getImagens().isEmpty()) {
+                model.addAttribute("imagens", produto.getImagens());
+            } else {
+                model.addAttribute("imagens", new ArrayList<>());
+            }
+
+            // Corrigido: Adicionar o caminho absoluto das imagens ao modelo
+            model.addAttribute("imagemAbsolutaPath", UPLOAD_DIR);
+
+            return "VisualizarProduto";
+        } else {
+            return "redirect:/pagina-de-erro";
+        }
     }
-
 }

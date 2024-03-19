@@ -1,7 +1,6 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.service;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ProdutoRepository;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProdutoService {
 
-    private static final String UPLOAD_DIR = "src/main/resources/imagem";
+    private static final String UPLOAD_DIR = "src/main/resources/imagens";
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -85,13 +84,6 @@ public class ProdutoService {
 
         // Obtém o caminho absoluto do diretório de upload
         String absoluteUploadPath = new File(UPLOAD_DIR).getAbsolutePath();
-
-        // Verifica se o diretório de upload existe e cria se necessário
-        File uploadDir = new File(absoluteUploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs(); // Cria o diretório e subdiretórios se necessário
-        }
-
         // Percorre cada imagem enviada
         for (MultipartFile imagem : imagens) {
             // Gera um nome único para a imagem
@@ -104,10 +96,7 @@ public class ProdutoService {
             imagem.transferTo(new File(caminhoImagem));
 
             // Adiciona o caminho relativo da imagem à lista de caminhos
-            caminhosImagens.add("imagens/" + nomeImagem); // Caminho relativo para ser usado na visualização
-
-            // Adiciona o caminho da imagem à lista de caminhos
-            caminhosImagens.add(caminhoImagem);
+            caminhosImagens.add(nomeImagem); // Caminho relativo para ser usado na visualização
 
         }
 
@@ -134,6 +123,10 @@ public class ProdutoService {
     public ProdutoDTO buscarProdutoPorId(Long id) {
         ProdutoEntity produtoEntity = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
+
+        for (ImagemProdutoEntity imagem : produtoEntity.getImagens()) {
+            System.out.println("Caminho da imagem: " + imagem.getCaminho());
+        }
 
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
