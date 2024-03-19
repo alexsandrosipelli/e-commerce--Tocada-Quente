@@ -1,16 +1,89 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Visualização do Produto</title>
         <!-- Bootstrap CSS -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f8f9fa;
+            }
+
+            .container {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-top: 20px;
+            }
+            .carousel-inner img {
+                border-radius: 5px;
+                max-height: 300px; /* Tamanho máximo das imagens do carrossel */
+            }
+
+            h2,
+            h4 {
+                color: #333;
+            }
+
+            p {
+                color: #555;
+            }
+
+            .carousel-inner img {
+                border-radius: 5px;
+            }
+
+            .thumbnail-list img {
+                max-width: 80px;
+                cursor: pointer;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+                cursor: not-allowed;
+            }
+        </style>
     </head>
+
     <body>
 
         <div class="container mt-5">
             <div class="row">
+
+                <div class="col-md-6">
+                    <h4>Imagens do Produto</h4>
+                    <div id="carouselImagens" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            <div th:each="imagem, iterStat : ${produto.imagens}" th:classappend="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'">
+                                <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="d-block w-100">
+                            </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselImagens" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselImagens" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Próximo</span>
+                        </a>
+                    </div>
+                    <div class="row mt-3 thumbnail-list">
+                        <div class="col-md-2" th:each="imagem : ${produto.imagens}">
+                            <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail"
+                                 onclick="selecionarImagem(this)">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3" disabled>Comprar</button>
+                </div>
                 <div class="col-md-6">
                     <h2 th:text="${produto.nome}"></h2>
                     <p th:text="${produto.descricaoDetalhada}"></p>
@@ -18,33 +91,7 @@
                     <p th:text="'Preço: R$ ' + ${#numbers.formatDecimal(produto.precoProduto, 2, 'COMMA', 2, 'POINT')}"></p>
                     <p th:text="'Quantidade em Estoque: ' + ${produto.qtdEstoque}"></p>
                 </div>
-                <div class="col-md-6">
-                    <h4>Imagens do Produto</h4>
-                    <div class="row">
-                        <div th:each="imagem : ${produto.imagens}">
-                            <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail">
-                        </div>
 
-
-                    </div>
-                    <button class="btn btn-primary" disabled>Comprar</button>
-                </div>
-                <div class="col-md-6">
-                    <h4>Imagens do Produto</h4>
-                    <div class="row">
-                        <!-- Corrigido: Adicionar o caminho absoluto das imagens -->
-                        <div th:each="imagem : ${produto.imagens}">
-                            <img th:src="@{'${imagemAbsolutaPath}/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail">
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" disabled>Comprar</button>
-                </div>
-                <div class="row">
-                    <div th:each="imagem : ${produto.imagens}">
-                        <!-- Modifique o atributo th:src para usar o caminho absoluto -->
-                        <img th:src="${imagemAbsolutaPath + '/' + imagem.caminho}" alt="Imagem do Produto" class="img-thumbnail">
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -53,5 +100,19 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+        <script>
+                                     function selecionarImagem(element) {
+                                         var caminhoImagem = element.getAttribute('src');
+                                         $('#carouselImagens .carousel-inner .carousel-item').removeClass('active');
+                                         $('#carouselImagens .carousel-inner .carousel-item').each(function () {
+                                             if ($(this).find('img').attr('src') === caminhoImagem) {
+                                                 $(this).addClass('active');
+                                                 return false;
+                                             }
+                                         });
+                                     }
+        </script>
+
     </body>
+
 </html>

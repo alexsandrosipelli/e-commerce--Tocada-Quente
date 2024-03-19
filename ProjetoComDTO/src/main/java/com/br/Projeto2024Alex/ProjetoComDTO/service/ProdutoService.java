@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProdutoService {
 
-    private static final String UPLOAD_DIR = "src/main/resources/imagens";
+    private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -51,8 +51,11 @@ public class ProdutoService {
 
         // Verificar se o ID do produto não é nulo após salvá-lo
         if (produtoEntity.getId() != null) {
-            // Salvar as imagens associadas ao produto
-            salvarImagensProduto(produtoEntity, imagens);
+            // Obtém o índice da imagem principal do DTO
+            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
+
+            // Salvar as imagens associadas ao produto e definir a imagem principal
+            salvarImagensProduto(produtoEntity, imagens, indiceImagemPrincipal);
         } else {
             // Lidar com o ID nulo, se necessário
             // Aqui você pode lançar uma exceção, registrar um erro, ou realizar alguma outra ação adequada ao seu caso
@@ -60,7 +63,7 @@ public class ProdutoService {
         }
     }
 
-    private void salvarImagensProduto(ProdutoEntity produtoEntity, List<MultipartFile> imagens) throws IOException {
+    private void salvarImagensProduto(ProdutoEntity produtoEntity, List<MultipartFile> imagens, int indiceImagemPrincipal) throws IOException {
         // Salvar as imagens no diretório e obter os caminhos salvos
         String[] caminhosImagens = salvarImagens(imagens);
 
@@ -70,10 +73,15 @@ public class ProdutoService {
                     ImagemProdutoEntity imagemEntity = new ImagemProdutoEntity();
                     imagemEntity.setCaminho(caminho);
                     imagemEntity.setProduto(produtoEntity); // Associar imagem ao produto
-
+                    imagemEntity.setPrincipal(false); // Define todas as imagens como não principais inicialmente
                     return imagemEntity;
                 })
                 .collect(Collectors.toList());
+
+        // Definir a imagem principal com base no índice fornecido
+        if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensEntities.size()) {
+            imagensEntities.get(indiceImagemPrincipal).setPrincipal(true);
+        }
 
         // Salvar as entidades ImagemProdutoEntity no banco de dados
         imagemProdutoRepository.saveAll(imagensEntities);

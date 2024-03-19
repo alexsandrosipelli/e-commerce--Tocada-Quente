@@ -34,7 +34,7 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
-    private static final String UPLOAD_DIR = "src/main/resources/imagem";
+    private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
 
     /*listar os produtos*/
@@ -65,11 +65,6 @@ public class ProdutoController {
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens) throws IOException {
 
-//        if (result.hasErrors()) {
-//
-//            System.out.println("teve erros" + result.getAllErrors());
-//            return "criarproduto";
-//        }
         produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
 
         return "redirect:/produtos";

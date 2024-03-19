@@ -58,6 +58,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <a th:href="@{/produtos}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
         <style>
@@ -67,56 +68,55 @@
                 margin-right: 10px; /* Espaçamento entre as imagens */
             }
         </style>
-                <button type="submit" class="btn btn-primary">Cadastrar</button>
-            </form>
-        </div>
+    </form>
+</div>
 
-        <!-- Bootstrap JS and jQuery -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <!-- JavaScript para preencher dinamicamente as opções das imagens principais -->
-        <script>
-            $(document).ready(function () {
-                // Ao selecionar as imagens, preenche as opções de imagem principal
-                $('#imagens').change(function () {
-                    $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
-                    $.each(this.files, function (index, file) {
-                        $('#imagemPrincipal').append($('<option>', {
-                            value: index,
-                            text: file.name
-                        }));
-                    });
-                });
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- JavaScript para preencher dinamicamente as opções das imagens principais -->
+<script>
+    $(document).ready(function () {
+        // Ao selecionar as imagens, preenche as opções de imagem principal
+        $('#imagens').change(function () {
+            $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
+            $.each(this.files, function (index, file) {
+                $('#imagemPrincipal').append($('<option>', {
+                    value: index,
+                    text: file.name
+                }));
             });
+        });
+    });
 
-            $(document).ready(function () {
-                // Ao selecionar as imagens, exibe as imagens selecionadas e preenche as opções de imagem principal
-                $('#imagens').change(function () {
-                    $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
-                    $('#imagensSelecionadas').empty(); // Limpa as imagens exibidas
-                    $.each(this.files, function (index, file) {
-                        // Cria um elemento <img> para exibir a imagem selecionada
-                        var imgElement = $('<img>', {
-                            src: URL.createObjectURL(file),
-                            alt: file.name,
-                            class: 'img-thumbnail m-2 imagem-selecionada', // Adiciona classes Bootstrap e a classe imagem-selecionada
-                            style: 'cursor: pointer;', // Adiciona estilo para indicar que é clicável
-                            click: function () {
-                                // Define a imagem como principal ao clicar nela
-                                $('#imagemPrincipal').val(index);
-                            }
-                        });
-                        $('#imagensSelecionadas').append(imgElement);
-
-                        // Adiciona a opção da imagem principal
-                        $('#imagemPrincipal').append($('<option>', {
-                            value: index,
-                            text: file.name
-                        }));
-                    });
+    $(document).ready(function () {
+        // Ao selecionar as imagens, exibe as imagens selecionadas e preenche as opções de imagem principal
+        $('#imagens').change(function () {
+            $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
+            $('#imagensSelecionadas').empty(); // Limpa as imagens exibidas
+            $.each(this.files, function (index, file) {
+                // Cria um elemento <img> para exibir a imagem selecionada
+                var imgElement = $('<img>', {
+                    src: URL.createObjectURL(file),
+                    alt: file.name,
+                    class: 'img-thumbnail m-2 imagem-selecionada', // Adiciona classes Bootstrap e a classe imagem-selecionada
+                    style: 'cursor: pointer;', // Adiciona estilo para indicar que é clicável
+                    click: function () {
+                        // Define a imagem como principal ao clicar nela
+                        $('#imagemPrincipal').val(index);
+                    }
                 });
+                $('#imagensSelecionadas').append(imgElement);
+
+                // Adiciona a opção da imagem principal
+                $('#imagemPrincipal').append($('<option>', {
+                    value: index,
+                    text: file.name
+                }));
             });
-        </script>
-    </body>
+        });
+    });
+</script>
+</body>
 </html>

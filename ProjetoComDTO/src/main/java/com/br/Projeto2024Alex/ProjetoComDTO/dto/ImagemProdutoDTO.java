@@ -13,7 +13,6 @@ public class ImagemProdutoDTO {
     private String caminho;
     private boolean principal;
     private Long produtoId; // Id do produto associado à imagem
-    private byte[] dadosImagem;
 
     public ImagemProdutoEntity toEntity() {
         ModelMapper modelMapper = new ModelMapper();
@@ -25,15 +24,7 @@ public class ImagemProdutoDTO {
         return modelMapper.map(imagemProdutoEntity, ImagemProdutoDTO.class);
     }
 
-    public byte[] getDadosImagem() {
-        return dadosImagem;
-    }
-
     // Getters e Setters
-    public void setDadosImagem(byte[] dadosImagem) {
-        this.dadosImagem = dadosImagem;
-    }
-
     public Long getId() {
         return id;
     }

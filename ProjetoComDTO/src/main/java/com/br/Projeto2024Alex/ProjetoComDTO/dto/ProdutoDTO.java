@@ -23,7 +23,7 @@ public class ProdutoDTO {
     private BigDecimal precoProduto;
     private int qtdEstoque;
     private boolean status;
-
+    private int ImagemPrincipal;
     @Valid
     private List<ImagemProdutoDTO> imagens;
 
@@ -35,8 +35,24 @@ public class ProdutoDTO {
     public ProdutoDTO fromEntity(ProdutoEntity produtoEntity) {
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
+    
+    public ModelMapper getModelMapper() {
+        return modelMapper;
+    }
+
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
+    public int getImagemPrincipal() {
+        return ImagemPrincipal;
+    }
 
     // Getters e Setters
+    public void setImagemPrincipal(int ImagemPrincipal) {    
+        this.ImagemPrincipal = ImagemPrincipal;
+    }
+
     public Long getId() {
         return id;
     }

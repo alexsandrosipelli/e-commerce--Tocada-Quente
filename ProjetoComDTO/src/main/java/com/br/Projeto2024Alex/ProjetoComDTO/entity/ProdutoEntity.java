@@ -29,7 +29,6 @@ public class ProdutoEntity {
     @Column(name = "descricao_detalhada", length = 2000)
     private String descricaoDetalhada;
 
-
     @Column(name = "precoproduto", precision = 10, scale = 2, nullable = false)
     private BigDecimal precoProduto;
 

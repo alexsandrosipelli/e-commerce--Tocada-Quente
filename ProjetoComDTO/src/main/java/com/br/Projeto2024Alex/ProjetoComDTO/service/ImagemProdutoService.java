@@ -1,5 +1,6 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.service;
 
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ImagemProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ImagemProdutoRepository;
@@ -10,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.modelmapper.ModelMapper;
 
 @Service
- 
+
 public class ImagemProdutoService {
+
 
 }
