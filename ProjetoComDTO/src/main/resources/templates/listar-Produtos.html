@@ -50,7 +50,7 @@
                         <td th:text="${produto.precoProduto}"></td>
                         <td th:text="${produto.status ? 'Ativo' : 'Inativo'}"></td>
                         <td>
-                            <a th:href="@{/produtos/editarProduto/{id}(id=${produto.id})}" class="btn btn-info btn-action">Editar</a>
+                            <a th:href="@{/produtos/{id}/editar(id=${produto.id})}" class="btn btn-info btn-action">Editar</a>
                 <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
                     <form th:action="@{/produtos/mudar-status}" th:method="post" th:id="'form-mudar-status-' + ${produto.id}">
                         <input type="hidden" name="id" th:value="${produto.id}">
@@ -61,7 +61,7 @@
 
                     <a th:href="@{/produtos/{id}(id=${produto.id})}" class="btn btn-secondary btn-action">Visualizar</a>
 
-                    
+
 
                 </th:block>
                 </td>

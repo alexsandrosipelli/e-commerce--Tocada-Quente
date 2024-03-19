@@ -24,6 +24,7 @@ public class ProdutoDTO {
     private int qtdEstoque;
     private boolean status;
     private int ImagemPrincipal;
+    private String imagemPrincipalString;
     @Valid
     private List<ImagemProdutoDTO> imagens;
 
@@ -35,7 +36,7 @@ public class ProdutoDTO {
     public ProdutoDTO fromEntity(ProdutoEntity produtoEntity) {
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
-    
+
     public ModelMapper getModelMapper() {
         return modelMapper;
     }
@@ -44,12 +45,20 @@ public class ProdutoDTO {
         this.modelMapper = modelMapper;
     }
 
+    public String getImagemPrincipalString() {
+        return imagemPrincipalString;
+    }
+
+    public void setImagemPrincipalString(String imagemPrincipalString) {
+        this.imagemPrincipalString = imagemPrincipalString;
+    }
+
     public int getImagemPrincipal() {
         return ImagemPrincipal;
     }
 
     // Getters e Setters
-    public void setImagemPrincipal(int ImagemPrincipal) {    
+    public void setImagemPrincipal(int ImagemPrincipal) {
         this.ImagemPrincipal = ImagemPrincipal;
     }
 

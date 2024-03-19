@@ -14,16 +14,18 @@
             <form id="cadastroProdutoForm" action="/criarproduto" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="nome">Nome:</label>
-                    <input type="text" class="form-control" id="nome" name="nome" required>
+                    <input type="text" class="form-control" id="nome" name="nome" maxlength="200" required>
                 </div>
+
                 <div class="form-group">
                     <label for="avaliacao">Avaliação:</label>
                     <input type="number" class="form-control" id="avaliacao" name="avaliacao" step="0.5" min="1" max="5" required>
                 </div>
                 <div class="form-group">
-                    <label for="descricao">Descrição Detalhada:</label>
-                    <textarea class="form-control" id="descricaoDetalhada" name="descricaoDetalhada" rows="5"></textarea>
+                    <label for="descricaoDetalhada">Descrição Detalhada:</label>
+                    <textarea class="form-control" id="descricaoDetalhada" name="descricaoDetalhada" rows="5" maxlength="2000" required></textarea>
                 </div>
+
                 <div class="form-group">
                     <label for="preco">Preço:</label>
                     <input type="number" class="form-control" id="precoProduto" name="precoProduto" step="0.01" min="0" required>
