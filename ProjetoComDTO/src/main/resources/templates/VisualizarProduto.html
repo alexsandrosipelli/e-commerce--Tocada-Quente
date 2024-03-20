@@ -86,10 +86,10 @@
                 </div>
                 <div class="col-md-6">
                     <h2 th:text="${produto.nome}"></h2>
-                    <p th:text="${produto.descricaoDetalhada}"></p>
+
                     <p th:text="'Avaliação: ' + ${produto.avaliacao}"></p>
-                    <p th:text="'Preço: R$ ' + ${#numbers.formatDecimal(produto.precoProduto, 2, 'COMMA', 2, 'POINT')}"></p>
-                    <p th:text="'Quantidade em Estoque: ' + ${produto.qtdEstoque}"></p>
+
+
                 </div>
 
             </div>

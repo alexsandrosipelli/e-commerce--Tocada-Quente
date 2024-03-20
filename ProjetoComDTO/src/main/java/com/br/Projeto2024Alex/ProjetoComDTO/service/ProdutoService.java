@@ -39,6 +39,7 @@ public class ProdutoService {
         ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
 
+        produtoDTO.getImagens();
         // Atualiza todas as informações do produto com base nos dados do DTO
         produtoEntity.setNome(produtoDTO.getNome());
         produtoEntity.setAvaliacao(produtoDTO.getAvaliacao());
@@ -46,9 +47,15 @@ public class ProdutoService {
         produtoEntity.setPrecoProduto(produtoDTO.getPrecoProduto());
         produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
         produtoEntity.setStatus(produtoDTO.isStatus());
+        /*esse foi a que o usuario escolheu no site*/
+        produtoDTO.getImagemPrincipal();
+        /*a minha imagem atual definida como true no banco é ... faça aa busca daqui para que eu posssa validar com o index da img princiapl que o usuario definiu no site*/
+
+        produtoEntity.getImagens();
 
         // Se imagens foram enviadas, processa as imagens
-        if (!imagens.isEmpty()) {
+        if (imagens != null && !imagens.isEmpty() && imagens.get(0).getSize() > 0) {
+
             // Salva as novas imagens e atualiza as imagens do produtoEntity
             salvarImagensProdutoEdicao(produtoEntity, imagens, produtoDTO.getImagemPrincipal());
         }
@@ -72,13 +79,23 @@ public class ProdutoService {
                 })
                 .collect(Collectors.toList());
 
+        // Identificar a última imagem principal e desativá-la
+        ImagemProdutoEntity ultimaImagemPrincipal = produtoEntity.getImagens().stream()
+                .filter(ImagemProdutoEntity::isPrincipal)
+                .findFirst()
+                .orElse(null);
+
+        if (ultimaImagemPrincipal != null) {
+            ultimaImagemPrincipal.setPrincipal(false);
+        }
+
         // Definir a nova imagem principal com base no índice fornecido
         if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < novasImagensEntities.size()) {
             novasImagensEntities.get(indiceImagemPrincipal).setPrincipal(true);
         }
 
-        // Adicionar as novas imagens ao produtoEntity (substituir as imagens antigas)
-        produtoEntity.getImagens().clear();
+        // Remover todas as imagens existentes e adicionar as novas
+        // produtoEntity.getImagens().clear();
         produtoEntity.getImagens().addAll(novasImagensEntities);
     }
 
@@ -203,10 +220,6 @@ public class ProdutoService {
     public ProdutoDTO buscarProdutoPorId(Long id) {
         ProdutoEntity produtoEntity = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
-
-        for (ImagemProdutoEntity imagem : produtoEntity.getImagens()) {
-            System.out.println("Caminho da imagem: " + imagem.getCaminho());
-        }
 
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }

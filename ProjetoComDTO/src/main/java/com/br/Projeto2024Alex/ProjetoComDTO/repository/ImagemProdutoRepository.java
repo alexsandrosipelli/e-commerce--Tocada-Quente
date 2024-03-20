@@ -9,4 +9,6 @@ import java.util.List;
 public interface ImagemProdutoRepository extends JpaRepository<ImagemProdutoEntity, Long> {
     
     ImagemProdutoEntity save(ImagemProdutoEntity imagem);
+
+    public Object findByProdutoIdAndPrincipalTrue(Long id);
 }

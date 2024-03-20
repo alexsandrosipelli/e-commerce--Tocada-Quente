@@ -9,58 +9,155 @@
     </head>
     <body class="container">
         <h1 class="my-4">Editar Produto</h1>
-        <form th:action="@{/editar-produto}" th:object="${produtoDTO}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/produtos/editar}" th:object="${produtoDTO}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{id}">
+
+            <!-- Campo para imagem principal -->
+            <label for="imagemPrincipal">Imagem Principal:</label>
+            <div class="form-group d-flex flex-row align-items-start">
+                <div style="max-width: 150px; max-height: 100px; margin-bottom: 100px;">
+                    <img th:src="@{'/imagem/' + ${produtoDTO.imagemPrincipalString}}" class="img-thumbnail" alt="Imagem Principal" style="max-width: 100%; max-height: 100%;">
+                </div>
+            </div>
 
             <div class="form-group">
                 <label for="nome">Nome:</label>
-                <input type="text" id="nome" class="form-control" th:field="*{nome}" maxlength="200" required>
+                <input type="text" id="nome" class="form-control" th:field="*{nome}"th:readonly="${tipoUsuario == 'ESTOQUISTA'}" maxlength="200" required>
             </div>
 
             <div class="form-group">
                 <label for="avaliacao">Avaliação:</label>
-                <input type="number" id="avaliacao" class="form-control" th:field="*{avaliacao}" step="0.5" min="1" max="5" required>
+                <input type="number" id="avaliacao" class="form-control" th:field="*{avaliacao}" th:readonly="${tipoUsuario == 'ESTOQUISTA'}"step="0.5" min="1" max="5" required>
             </div>
 
             <div class="form-group">
                 <label for="descricao">Descrição:</label>
-                <textarea id="descricao" rows="4" class="form-control" th:field="*{descricaoDetalhada}" maxlength="2000" required></textarea>
+                <textarea id="descricao" rows="4" class="form-control" th:field="*{descricaoDetalhada}"th:readonly="${tipoUsuario == 'ESTOQUISTA'}" maxlength="2000" required></textarea>
             </div>
 
             <div class="form-group">
                 <label for="preco">Preço:</label>
-                <input type="number" id="preco" class="form-control" step="0.01" th:field="*{precoProduto}" required>
+                <input type="number" id="preco" class="form-control" step="0.01" th:field="*{precoProduto}"th:readonly="${tipoUsuario == 'ESTOQUISTA'}" required>
             </div>
 
             <div class="form-group">
                 <label for="estoque">Estoque:</label>
-                <input type="number" id="estoque" class="form-control" th:field="*{qtdEstoque}" required>
+                <input type="number" id="estoque" class="form-control" th:field="*{qtdEstoque}"   required>
             </div>
 
             <div class="form-group">
                 <label for="status" style="margin-right: 25px;">Status:</label>
-                <input type="checkbox" id="status" class="form-check-input" th:field="*{status}">
+                <input type="checkbox" id="status" class="form-check-input" th:field="*{status}" th:readonly="${tipoUsuario == 'ESTOQUISTA'}">
             </div>
 
-            <div id="imagensSelecionadas" class="d-flex flex-wrap align-items-center">
-                <div class="image-preview" th:each="imagem : ${produtoDTO.imagens}" style="max-width: 150px; margin-right: 10px; margin-bottom: 10px;">
+            <h3>Outras imagens do produto</h3>
+            <div id="imagensDoProduto" class="d-flex flex-wrap align-items-center">
+                <div class="image-preview" th:each="imagem, imagemIndex : ${produtoDTO.imagens}" style="max-width: 150px; margin-right: 10px; margin-bottom: 10px;">
                     <img th:src="@{'/imagem/' + ${imagem.caminho}}" class="img-thumbnail" alt="Imagem">
-                    <input type="radio" th:name="*{imagemPrincipal}" th:value="${imagem.caminho}" th:checked="${imagem.caminho == produtoDTO.imagemPrincipal}">
+                    <!-- <button type="button" class="btn btn-danger btn-sm" onclick="removerImagem('${imagemIndex.index}')">Remover</button> -->
                 </div>
             </div>
+            <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
+                <div class="form-group">
+                    <label for="imagemPrincipal">Escolha a imagem principal:</label>
+                    <select class="form-control" id="imagemPrincipal" name="imagemPrincipal">
+                        <option value="">Selecione...</option>
+                        <!-- Adicione as opções das imagens do produto com os índices -->
+                        <option th:each="imagem, imagemIndex : ${produtoDTO.imagens}" 
+                                th:value="${imagemIndex.index}" 
+                                th:text="${imagem.caminho}" 
+                                th:selected="${imagem.caminho eq selectedImagePath}"></option>
+                    </select>
+                </div>
+            </th:block>
 
 
+            <div class="form-group">
+                <label for="imagens">Selecione as imagens:</label>
+                <input type="file" class="form-control-file" id="imagens" name="imagens" multiple>
+            </div>
 
-
+            <div class="form-group">
+                <label for="imagensSelecionadas">Imagens Selecionadas:</label>
+                <div id="imagensSelecionadas" class="d-flex flex-wrap align-items-center">
+                    <!-- As imagens serão adicionadas aqui dinamicamente -->
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Salvar</button>
-
+            <style>
+                .imagem-selecionada {
+                    max-width: 100px; /* Largura máxima da imagem */
+                    height: auto; /* Altura automática para manter a proporção */
+                    margin-right: 10px; /* Espaçamento entre as imagens */
+                }
+            </style>
         </form>
-
         <!-- Adicione as referências ao jQuery e Bootstrap JavaScript -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <!-- JavaScript para preencher dinamicamente as opções das imagens principais -->
+        <!-- JavaScript para remover imagens -->
+        <script>
+            $(document).ready(function () {
+                // Ao selecionar as imagens, exibe as imagens selecionadas e preenche as opções de imagem principal
+                $('#imagens').change(function () {
+                    $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
+                    $('#imagensSelecionadas').empty(); // Limpa as imagens exibidas
+                    // Adiciona as opções das imagens do produto
+                    $('#imagensDoProduto .image-preview img').each(function () {
+                        var imagePath = $(this).attr('src');
+                        $('#imagemPrincipal').append($('<option>', {
+                            value: imagePath,
+                            text: imagePath
+                        }));
+                    });
+                    $.each(this.files, function (index, file) {
+                        if (file) {
+                            // Cria um elemento <img> para exibir a imagem selecionada
+                            var imgElement = $('<img>', {
+                                src: URL.createObjectURL(file),
+                                alt: file.name,
+                                class: 'img-thumbnail m-2 imagem-selecionada', // Adiciona classes Bootstrap e a classe imagem-selecionada
+                                style: 'cursor: pointer;', // Adiciona estilo para indicar que é clicável
+                                click: function () {
+                                    // Define a imagem como principal ao clicar nela
+                                    $('#imagemPrincipal').val(URL.createObjectURL(file));
+                                }
+                            });
+                            $('#imagensSelecionadas').append(imgElement);
+                            // Adiciona a opção da imagem principal
+                            $('#imagemPrincipal').append($('<option>', {
+                                value: URL.createObjectURL(file),
+                                text: file.name
+                            }));
+                        }
+                    });
+                });
+
+                // Adiciona as imagens existentes como campos ocultos ao submeter o formulário
+                $('form').submit(function () {
+                    $('#imagensDoProduto .image-preview img').each(function () {
+                        var imagePath = $(this).attr('src');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'imagensExistentes',
+                            value: imagePath
+                        }).appendTo('form');
+                    });
+                });
+
+                // Atualiza dinamicamente a visualização da imagem principal ao selecionar uma opção no select
+                $('#imagemPrincipal').change(function () {
+                    var selectedIndex = $(this).prop('selectedIndex'); // Obtém o índice selecionado
+                    if (selectedIndex > 0) { // Verifica se o índice é maior que 0 (ignora a opção padrão)
+                        // Atualiza dinamicamente a visualização da imagem principal
+                        var selectedImagePath = $('#imagensDoProduto .image-preview img').eq(selectedIndex - 1).attr('src');
+                        $('#imagemPrincipal').attr('src', selectedImagePath);
+                    }
+                });
+            });
+        </script>
 
     </body>
+
 </html>

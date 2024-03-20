@@ -13,14 +13,12 @@
         <!-- Verifica se o tipo de usuário é ADMINISTRADOR para exibir o botão de listar usuários -->
     <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
         <a href="/usuario/listar"><button>Listar Usuários</button></a>
-        <a href="/produtos"><button>Listar Produtos</button></a>
+
 
     </th:block>
-
+    <a href="/produtos"><button>Listar Produtos</button></a>
     <!-- Verifica se o tipo de usuário é ESTOQUISTA para exibir o botão de listar produtos -->
-    <th:block th:if="${tipoUsuario == 'ESTOQUISTA'}">
-        <a th:href="@{/produtos}" class="btn btn-primary">Listar Produtos</a>
-    </th:block>
+
 </body>
 
 </html>

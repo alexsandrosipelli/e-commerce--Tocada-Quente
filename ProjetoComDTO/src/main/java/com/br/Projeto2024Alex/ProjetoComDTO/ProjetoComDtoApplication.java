@@ -8,7 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
- 
+
 public class ProjetoComDtoApplication {
 
     public static void main(String[] args) {
@@ -21,4 +21,3 @@ public class ProjetoComDtoApplication {
         return new BCryptPasswordEncoder();
     }
 }
- 
