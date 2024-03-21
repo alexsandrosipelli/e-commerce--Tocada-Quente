@@ -50,6 +50,7 @@ public class ProdutoController {
         ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
         produtoDTO.setImagemPrincipalString(imagemPrincipal.getCaminho());
 
+        model.addAttribute("usuarioLogado", usuarioLogado.getGrupo());
         // Carregar as imagens existentes do produto e adicionar ao modelo
         model.addAttribute("produtoDTO", produtoDTO);
         model.addAttribute("selectedImagePath", imagemPrincipal.getCaminho());

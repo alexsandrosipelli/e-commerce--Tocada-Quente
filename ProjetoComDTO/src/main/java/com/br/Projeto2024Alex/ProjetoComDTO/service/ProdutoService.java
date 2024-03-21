@@ -49,7 +49,6 @@ public class ProdutoService {
         produtoEntity.setStatus(produtoDTO.isStatus());
         /*esse foi a que o usuario escolheu no site*/
         produtoDTO.getImagemPrincipal();
-        /*a minha imagem atual definida como true no banco é ... faça aa busca daqui para que eu posssa validar com o index da img princiapl que o usuario definiu no site*/
 
         produtoEntity.getImagens();
 
