@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Editar Produto - Estoque</title>
+        <!-- Adicione a referência ao Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body class="container">
+        <h1 class="my-4">Editar Produto - Estoque</h1>
+        <form th:action="@{/produtos/editarEstoquista}" th:object="${produtoDTO}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" class="form-control" th:field="*{nome}" readonly>
+            </div>
+
+            <!-- Campo para alterar a quantidade de estoque -->
+            <div class="form-group">
+                <label for="estoque">Estoque:</label>
+                <input type="number" id="estoque" class="form-control" th:field="*{qtdEstoque}" required>
+            </div>
+
+            <!-- Apenas o botão de salvar para o estoquista -->
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+
+        <!-- Adicione as referências ao jQuery e Bootstrap JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

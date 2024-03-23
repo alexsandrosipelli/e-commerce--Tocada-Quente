@@ -42,20 +42,38 @@ public class ProdutoController {
     /* Acessar a página de edição de produto */
     @GetMapping("/produtos/{id}/editar")
     public String mostrarFormularioEdicaoProduto(@PathVariable Long id, Model model, HttpSession session) {
-
-        ProdutoDTO produtoDTO = produtoService.buscarProdutoPorId(id);
         UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
-        int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
+        ProdutoDTO produtoDTO = produtoService.buscarProdutoPorId(id);
 
-        ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
-        produtoDTO.setImagemPrincipalString(imagemPrincipal.getCaminho());
+        String tipoUsuario = usuarioLogado.getGrupo();
 
-        model.addAttribute("usuarioLogado", usuarioLogado.getGrupo());
-        // Carregar as imagens existentes do produto e adicionar ao modelo
-        model.addAttribute("produtoDTO", produtoDTO);
-        model.addAttribute("selectedImagePath", imagemPrincipal.getCaminho());
+        /*Se o usuario for estoquista apresentará a tela de ediçao do estoquista*/
+        if ("ESTOQUISTA".equals(tipoUsuario)) {
 
-        return "editar-Produto";
+            model.addAttribute("produtoDTO", produtoDTO);
+
+            return "edicao-estoquista";
+        } else {
+            int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
+            ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
+            produtoDTO.setImagemPrincipalString(imagemPrincipal.getCaminho());
+
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            // Carregar as imagens existentes do produto e adicionar ao modelo
+            model.addAttribute("produtoDTO", produtoDTO);
+            model.addAttribute("selectedImagePath", imagemPrincipal.getCaminho());
+
+            return "editar-Produto"; // Retornar a página padrão de edição
+        }
+    }
+
+    @PostMapping("/produtos/editarEstoquista")
+    public String editarProdutoEstoquista(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO) {
+        produtoService.editarProdutoEstoquista(produtoDTO);
+        return "redirect:/produtos";
     }
 
     /*esse que vai mudar o produto*/
@@ -75,8 +93,11 @@ public class ProdutoController {
     public String listarProdutos(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "") String keyword, Principal principal) {
         UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
-        String tipoUsuario = usuarioLogado.getGrupo();
 
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
+        String tipoUsuario = usuarioLogado.getGrupo();
         model.addAttribute("tipoUsuario", tipoUsuario);
 
         Page<ProdutoDTO> produtosPage = produtoService.listarProdutosPorNomePaginado(keyword, PageRequest.of(page, 10, Sort.by("id").descending()));
@@ -87,7 +108,12 @@ public class ProdutoController {
 
     /*acessar a pagina de criaçao de produto*/
     @GetMapping("/produtos/novo")
-    public String mostrarFormularioCriacaoProduto(Model model) {
+    public String mostrarFormularioCriacaoProduto(Model model, HttpSession session) {
+        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
+
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
         model.addAttribute("produtoDTO", new ProdutoDTO());
         return "criarproduto";
     }
@@ -97,7 +123,7 @@ public class ProdutoController {
     public String criarProduto(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO,
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens) throws IOException {
-
+        produtoDTO.setStatus(true);
         produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
 
         return "redirect:/produtos";
@@ -117,7 +143,12 @@ public class ProdutoController {
     }
 
     @GetMapping("/produtos/{id}")
-    public String visualizarProduto(@PathVariable Long id, Model model) {
+    public String visualizarProduto(@PathVariable Long id, Model model, HttpSession session) {
+        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
+
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
         ProdutoDTO produto = produtoService.buscarProdutoPorId(id);
 
         if (produto != null) {

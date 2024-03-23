@@ -23,22 +23,29 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
-
+    
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
-
+    
     @Autowired
     private ProdutoRepository produtoRepository;
-
+    
     @Autowired
     private ImagemProdutoRepository imagemProdutoRepository;
-
+    
     private final ModelMapper modelMapper = new ModelMapper();
-
+    
+    @Transactional
+    public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
+        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
+        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
+    }
+    
     @Transactional
     public void editarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
         ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
-
+        
         produtoDTO.getImagens();
         // Atualiza todas as informações do produto com base nos dados do DTO
         produtoEntity.setNome(produtoDTO.getNome());
@@ -46,10 +53,10 @@ public class ProdutoService {
         produtoEntity.setDescricaoDetalhada(produtoDTO.getDescricaoDetalhada());
         produtoEntity.setPrecoProduto(produtoDTO.getPrecoProduto());
         produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
-        produtoEntity.setStatus(produtoDTO.isStatus());
+
         /*esse foi a que o usuario escolheu no site*/
         produtoDTO.getImagemPrincipal();
-
+        
         produtoEntity.getImagens();
 
         // Se imagens foram enviadas, processa as imagens
@@ -62,7 +69,7 @@ public class ProdutoService {
         // Salva as alterações no banco de dados
         produtoRepository.save(produtoEntity);
     }
-
+    
     private void salvarImagensProdutoEdicao(ProdutoEntity produtoEntity, List<MultipartFile> imagens, int indiceImagemPrincipal) throws IOException {
         // Salvar as novas imagens no diretório e obter os caminhos salvos
         String[] caminhosImagens = salvarImagensEdicao(imagens);
@@ -83,7 +90,7 @@ public class ProdutoService {
                 .filter(ImagemProdutoEntity::isPrincipal)
                 .findFirst()
                 .orElse(null);
-
+        
         if (ultimaImagemPrincipal != null) {
             ultimaImagemPrincipal.setPrincipal(false);
         }
@@ -97,7 +104,7 @@ public class ProdutoService {
         // produtoEntity.getImagens().clear();
         produtoEntity.getImagens().addAll(novasImagensEntities);
     }
-
+    
     private String[] salvarImagensEdicao(List<MultipartFile> imagens) throws IOException {
         List<String> caminhosImagens = new ArrayList<>();
 
@@ -121,7 +128,7 @@ public class ProdutoService {
         // Converte a lista de caminhos para um array de strings
         return caminhosImagens.toArray(new String[0]);
     }
-
+    
     public Page<ProdutoDTO> listarProdutosPorNomePaginado(String keyword, Pageable pageable) {
         Page<ProdutoEntity> produtosPage;
         if (keyword != null && !keyword.isEmpty()) {
@@ -131,7 +138,7 @@ public class ProdutoService {
         }
         return produtosPage.map(this::toDTO);
     }
-
+    
     @Transactional
     public void criarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
         // Salvar o produto primeiro para obter o ID gerado automaticamente
@@ -150,7 +157,7 @@ public class ProdutoService {
             throw new IllegalArgumentException("O ID do produto não pode ser nulo após a criação.");
         }
     }
-
+    
     private void salvarImagensProduto(ProdutoEntity produtoEntity, List<MultipartFile> imagens, int indiceImagemPrincipal) throws IOException {
         // Salvar as imagens no diretório e obter os caminhos salvos
         String[] caminhosImagens = salvarImagens(imagens);
@@ -174,7 +181,7 @@ public class ProdutoService {
         // Salvar as entidades ImagemProdutoEntity no banco de dados
         imagemProdutoRepository.saveAll(imagensEntities);
     }
-
+    
     private String[] salvarImagens(List<MultipartFile> imagens) throws IOException {
         List<String> caminhosImagens = new ArrayList<>();
 
@@ -199,11 +206,11 @@ public class ProdutoService {
         // Converte a lista de caminhos para um array de strings
         return caminhosImagens.toArray(new String[0]);
     }
-
+    
     private ProdutoDTO toDTO(ProdutoEntity produtoEntity) {
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
-
+    
     @Transactional
     public void mudarStatusProduto(Long id) {
         ProdutoEntity produto = produtoRepository.findById(id)
@@ -215,12 +222,12 @@ public class ProdutoService {
         // Salva as alterações no banco de dados
         produtoRepository.save(produto);
     }
-
+    
     public ProdutoDTO buscarProdutoPorId(Long id) {
         ProdutoEntity produtoEntity = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
-
+        
         return modelMapper.map(produtoEntity, ProdutoDTO.class);
     }
-
+    
 }
