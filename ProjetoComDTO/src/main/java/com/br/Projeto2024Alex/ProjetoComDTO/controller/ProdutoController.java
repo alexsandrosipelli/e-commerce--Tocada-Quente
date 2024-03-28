@@ -2,6 +2,7 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.ProdutoService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,12 +24,11 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -159,8 +159,6 @@ public class ProdutoController {
             } else {
                 model.addAttribute("imagens", new ArrayList<>());
             }
-
-            // Corrigido: Adicionar o caminho absoluto das imagens ao modelo
             model.addAttribute("imagemAbsolutaPath", UPLOAD_DIR);
 
             return "VisualizarProduto";
