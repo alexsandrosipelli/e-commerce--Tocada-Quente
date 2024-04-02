@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sua Loja</title>
+        <!-- Link para o CSS do Bootstrap -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Link para o CSS personalizado -->
+        <link href="/css/custom.css" rel="stylesheet">
+        <style>
+            /* Estilos personalizados */
+            body {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            .navbar {
+                background-color: #333333;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .navbar-brand {
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            .navbar-nav .nav-link {
+                color: #ffffff;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #007bff;
+            }
+
+            .card {
+
+                border: none;
+                transition: transform 0.3s;
+                background-color: #333333;
+                color: #ffffff;
+                margin-bottom: 20px;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+            .card-img-top {
+                object-fit: cover;
+                height: 200px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                color: #ffffff;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-text {
+                color: #cccccc;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+            /* Estilos adicionais */
+            .navbar-nav.ml-auto {
+                display: flex;
+                align-items: center;
+            }
+
+            .nav-link {
+                margin-right: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Barra de navegação -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="/imgLogo/logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+                TocadaQuente
+            </a>
+            <div class="navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" th:href="@{#}">Faça login/Crie seu login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-cart-fill"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Lista de produtos em cards -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-3 mb-3" th:each="produto : ${produtos}">
+                    <div class="card">
+                        <img th:src="@{'/imagem/' + ${produto.imagemPrincipalString}}" class="card-img-top" alt="Imagem do produto">
+
+                        <div class="card-body">
+                            <!-- Definindo altura fixa para o título -->
+                            <h5 class="card-title" th:text="${produto.nome}" style="height: 60px; overflow: hidden;"></h5>
+                            <!-- Definindo altura fixa para a descrição -->
+                            <p class="card-text" th:text="'R$ ' + ${produto.precoProduto}" style="height: 40px; overflow: hidden;"></p>
+                            <a href="#" class="btn btn-primary" th:href="@{/site/{id}(id=${produto.id})}">Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link para o JavaScript do Bootstrap -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

@@ -77,6 +77,7 @@
                             <span class="sr-only">Próximo</span>
                         </a>
                     </div>
+                    
                     <div class="row mt-3 thumbnail-list">
                         <div class="col-md-2" th:each="imagem : ${produto.imagens}">
                             <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail"
@@ -86,9 +87,11 @@
                     <button class="btn btn-primary mt-3" disabled>Comprar</button>
                 </div>
                 <div class="col-md-6">
+                   
                     <h2 th:text="${produto.nome}"></h2>
-
-                    <p th:text="'Avaliação: ' + ${produto.avaliacao}"></p>
+                <p class="lead" th:text="'Descrição: ' +${produto.descricaoDetalhada}"></p>
+                <p th:text="'Valor: R$ ' + ${produto.precoProduto}"></p>
+                <p th:text="'Avaliação: ' + ${produto.avaliacao}"></p>
 
 
                 </div>

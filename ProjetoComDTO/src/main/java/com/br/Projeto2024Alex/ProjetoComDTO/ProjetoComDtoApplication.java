@@ -20,4 +20,5 @@ public class ProjetoComDtoApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
 }

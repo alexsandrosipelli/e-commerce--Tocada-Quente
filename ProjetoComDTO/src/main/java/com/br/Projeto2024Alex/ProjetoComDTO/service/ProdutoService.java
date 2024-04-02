@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +33,15 @@ public class ProdutoService {
     private ImagemProdutoRepository imagemProdutoRepository;
 
     private final ModelMapper modelMapper = new ModelMapper();
+
+    public List<ProdutoDTO> listarProdutos() {
+        List<ProdutoEntity> produtosEntities = produtoRepository.findAll();
+        return produtosEntities.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+     
 
     @Transactional
     public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
