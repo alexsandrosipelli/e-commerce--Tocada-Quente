@@ -30,7 +30,7 @@ public class SiteController {
     private ProdutoService produtoService;
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
-    @GetMapping("/")
+    @GetMapping
     public String inicial(Model model) {
         List<ProdutoDTO> produtos = produtoService.listarProdutos();
 
