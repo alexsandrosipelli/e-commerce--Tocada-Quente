@@ -56,5 +56,6 @@ public class ImagemProdutoDTO {
     public void setProdutoId(Long produtoId) {
         this.produtoId = produtoId;
     }
+    
 
 }

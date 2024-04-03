@@ -41,8 +41,6 @@ public class ProdutoService {
                 .collect(Collectors.toList());
     }
 
-     
-
     @Transactional
     public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
         ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
@@ -55,7 +53,6 @@ public class ProdutoService {
         ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
 
-        produtoDTO.getImagens();
         // Atualiza todas as informações do produto com base nos dados do DTO
         produtoEntity.setNome(produtoDTO.getNome());
         produtoEntity.setAvaliacao(produtoDTO.getAvaliacao());
@@ -63,16 +60,29 @@ public class ProdutoService {
         produtoEntity.setPrecoProduto(produtoDTO.getPrecoProduto());
         produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
 
-        /*esse foi a que o usuario escolheu no site*/
-        produtoDTO.getImagemPrincipal();
-
-        produtoEntity.getImagens();
-
-        // Se imagens foram enviadas, processa as imagens
-        if (imagens != null && !imagens.isEmpty() && imagens.get(0).getSize() > 0) {
-
+        // Se entrar nesse if é pq tem img nova
+        if (!imagens.getFirst().getOriginalFilename().equals("")) {
             // Salva as novas imagens e atualiza as imagens do produtoEntity
+            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
+            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
+            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
+                // Define a nova imagem principal entre as imagens existentes
+                for (int i = 0; i < imagensProduto.size(); i++) {
+                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
+                }
+            }
             salvarImagensProdutoEdicao(produtoEntity, imagens, produtoDTO.getImagemPrincipal());
+
+        } else {
+            // Se não foram enviadas novas imagens, verifica se o índice da imagem principal é válido
+            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
+            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
+            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
+                // Define a nova imagem principal entre as imagens existentes
+                for (int i = 0; i < imagensProduto.size(); i++) {
+                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
+                }
+            }
         }
 
         // Salva as alterações no banco de dados
@@ -122,16 +132,20 @@ public class ProdutoService {
         // Percorre cada imagem enviada
         for (MultipartFile imagem : imagens) {
             // Gera um nome único para a imagem
-            String nomeImagem = System.currentTimeMillis() + "_" + imagem.getOriginalFilename();
+            if (!imagem.getOriginalFilename().equals("")) {
+                String nomeImagem = System.currentTimeMillis() + "_" + imagem.getOriginalFilename();
 
-            // Cria o caminho completo para salvar a imagem
-            String caminhoImagem = absoluteUploadPath + File.separator + nomeImagem;
+                // Cria o caminho completo para salvar a imagem
+                String caminhoImagem = absoluteUploadPath + File.separator + nomeImagem;
 
-            // Salva a imagem no diretório
-            imagem.transferTo(new File(caminhoImagem));
+                // Salva a imagem no diretório
+                imagem.transferTo(new File(caminhoImagem));
 
-            // Adiciona o caminho relativo da imagem à lista de caminhos
-            caminhosImagens.add(nomeImagem); // Caminho relativo para ser usado na visualização
+                // Adiciona o caminho relativo da imagem à lista de caminhos
+                caminhosImagens.add(nomeImagem); // Caminho relativo para ser usado na visualização  
+
+            }
+
         }
 
         // Converte a lista de caminhos para um array de strings

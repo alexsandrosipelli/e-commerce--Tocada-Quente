@@ -54,8 +54,9 @@
             <div class="form-group">
                 <label for="imagemPrincipal">Escolha a imagem principal:</label>
                 <select class="form-control" id="imagemPrincipal" name="imagemPrincipal">
-                    <option value="">Selecione...</option>
-                    <!-- Adicione as opções das imagens do produto com os índices -->
+                    <!-- Adicione a opção selecionada diretamente com o valor do index -->
+                    <option th:value="${produtoDTO.imagemPrincipal}" th:text="${produtoDTO.imagemPrincipal}"></option>
+                    <!-- Adicione as outras opções das imagens do produto -->
                     <option th:each="imagem, imagemIndex : ${produtoDTO.imagens}" 
                             th:value="${imagemIndex.index}" 
                             th:text="${imagem.caminho}" 
@@ -89,6 +90,13 @@
         <!-- JavaScript para remover imagens -->
         <script>
             $(document).ready(function () {
+                // Verifica se a imagem principal não foi selecionada
+                if ($('#imagemPrincipal').val() === '') {
+                    // Seleciona automaticamente a última imagem principal como principal
+                    var lastImageIndex = ImagemPrincipal;
+                    $('#imagemPrincipal').val(lastImageIndex);
+                }
+
                 // Ao selecionar as imagens, exibe as imagens selecionadas e preenche as opções de imagem principal
                 $('#imagens').change(function () {
                     $('#imagemPrincipal').empty().append('<option value="">Selecione...</option>');
@@ -146,7 +154,26 @@
                     }
                 });
             });
+
         </script>
+        <script>
+            $(document).ready(function () {
+                // Atualiza dinamicamente a visualização da imagem principal ao selecionar uma opção no select
+                $('#imagemPrincipal').change(function () {
+                    var selectedImagePath = $(this).val(); // Obtém o caminho da imagem selecionada no select
+                    // Atualiza dinamicamente a visualização da imagem principal
+                    $('#imagensDoProduto .image-preview img').each(function () {
+                        if ($(this).attr('src') === selectedImagePath) {
+                            $(this).parent().addClass('selected'); // Adiciona classe para destacar a imagem selecionada
+                        } else {
+                            $(this).parent().removeClass('selected'); // Remove classe de outras imagens
+                        }
+                    });
+                });
+            });
+        </script>
+
+
 
     </body>
 

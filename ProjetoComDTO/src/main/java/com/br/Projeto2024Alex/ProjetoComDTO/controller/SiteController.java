@@ -35,11 +35,7 @@ public class SiteController {
         List<ProdutoDTO> produtos = produtoService.listarProdutos();
 
         // Para cada produto na lista de produtos, define o caminho da imagem principal
-        produtos.forEach(produto -> {
-            int indexImagemPrincipal = produto.getImagemPrincipal();
-            ImagemProdutoDTO imagemPrincipal = produto.getImagens().get(indexImagemPrincipal);
-            produto.setImagemPrincipalString(imagemPrincipal.getCaminho());
-        });
+        produtos.forEach(produto -> produto.setImagemPrincipalString(produto.getImagemPrincipalStringIndex()));
 
         model.addAttribute("produtos", produtos);
 

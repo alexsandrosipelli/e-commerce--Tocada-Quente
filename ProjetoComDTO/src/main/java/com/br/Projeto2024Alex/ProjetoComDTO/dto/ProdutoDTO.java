@@ -125,4 +125,49 @@ public class ProdutoDTO {
     public void setImagens(List<ImagemProdutoDTO> imagens) {
         this.imagens = imagens;
     }
+
+    public String getImagemPrincipalStringIndex() {
+        ImagemProdutoDTO imagemPrincipal = getImagemPrincipal1();
+        if (imagemPrincipal != null) {
+            return imagemPrincipal.getCaminho();
+        } else {
+            return null;
+        }
+    }
+
+    public ImagemProdutoDTO getImagemPrincipal1() {
+        // Percorre a lista de imagens do produto
+        for (ImagemProdutoDTO imagem : imagens) {
+            // Verifica se a imagem tem o status principal ativo
+            if (imagem.isPrincipal()) {
+                // Retorna a imagem principal encontrada
+                return imagem;
+            }
+        }
+        // Se não encontrar nenhuma imagem principal, retorna null
+        return null;
+    }
+
+    public String getCaminhoImagemPrincipal() {
+        String caminhoImagemPrincipal = null;
+        for (ImagemProdutoDTO imagem : imagens) {
+            if (imagem.isPrincipal()) {
+                caminhoImagemPrincipal = imagem.getCaminho();
+                break; // Encontrou a imagem principal, pode sair do loop
+            }
+        }
+        return caminhoImagemPrincipal;
+    }
+
+    public int getIndiceImagemPrincipal() {
+        int indiceImagemPrincipal = -1; // Valor padrão caso não encontre a imagem principal
+        for (int i = 0; i < imagens.size(); i++) {
+            ImagemProdutoDTO imagem = imagens.get(i);
+            if (imagem.isPrincipal()) {
+                indiceImagemPrincipal = i; // Atualiza o índice da imagem principal
+                break; // Encontrou a imagem principal, pode sair do loop
+            }
+        }
+        return indiceImagemPrincipal;
+    }
 }

@@ -46,8 +46,17 @@ public class ProdutoController {
             return "redirect:/";
         }
         ProdutoDTO produtoDTO = produtoService.buscarProdutoPorId(id);
-
         String tipoUsuario = usuarioLogado.getGrupo();
+        String caminhoImagemPrincipal = produtoDTO.getCaminhoImagemPrincipal();
+        // Definir o caminho da imagem principal no produtoDTO
+        produtoDTO.setImagemPrincipalString(caminhoImagemPrincipal);
+
+        List<ImagemProdutoDTO> imagens = produtoDTO.getImagens();
+
+        int indiceImagemPrincipal = -1;
+        indiceImagemPrincipal = produtoDTO.getIndiceImagemPrincipal();
+
+        produtoDTO.setImagemPrincipal(indiceImagemPrincipal);
 
         /*Se o usuario for estoquista apresentará a tela de ediçao do estoquista*/
         if ("ESTOQUISTA".equals(tipoUsuario)) {
@@ -56,14 +65,10 @@ public class ProdutoController {
 
             return "edicao-estoquista";
         } else {
-            int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
-            ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
-            produtoDTO.setImagemPrincipalString(imagemPrincipal.getCaminho());
 
             model.addAttribute("tipoUsuario", tipoUsuario);
             // Carregar as imagens existentes do produto e adicionar ao modelo
             model.addAttribute("produtoDTO", produtoDTO);
-            model.addAttribute("selectedImagePath", imagemPrincipal.getCaminho());
 
             return "editar-Produto"; // Retornar a página padrão de edição
         }
@@ -71,6 +76,7 @@ public class ProdutoController {
 
     @PostMapping("/produtos/editarEstoquista")
     public String editarProdutoEstoquista(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO) {
+
         produtoService.editarProdutoEstoquista(produtoDTO);
         return "redirect:/produtos";
     }
@@ -81,6 +87,7 @@ public class ProdutoController {
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens,
             RedirectAttributes attributes) throws IOException {
+        produtoDTO.getImagemPrincipal();
         produtoService.editarProduto(produtoDTO, imagens);
 
         attributes.addFlashAttribute("mensagem", "Produto editado com sucesso!");
