@@ -2,7 +2,7 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.UsuarioDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.service.UsuarioService;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.UsuarioServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 
@@ -22,12 +22,12 @@ import org.thymeleaf.util.StringUtils;
 @RequestMapping("/usuario")
 public class UsuarioController {
 
-    private final UsuarioService usuarioService;
+    private final UsuarioServiceImpl usuarioServiceImpl;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioController(UsuarioService usuarioService, PasswordEncoder passwordEncoder) {
-        this.usuarioService = usuarioService;
+    public UsuarioController(UsuarioServiceImpl usuarioServiceImpl, PasswordEncoder passwordEncoder) {
+        this.usuarioServiceImpl = usuarioServiceImpl;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -52,7 +52,7 @@ public class UsuarioController {
             return "publica-criar-usuario";
         }
 
-        if (usuarioService.existeEmail(usuarioDTO.getEmail())) {
+        if (usuarioServiceImpl.existeEmail(usuarioDTO.getEmail())) {
             result.rejectValue("email", "email.exists", "O e-mail já está cadastrado. Por favor, escolha outro.");
             return "publica-criar-usuario";
         }
@@ -60,14 +60,14 @@ public class UsuarioController {
         String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
         usuarioDTO.setSenha(senhaCriptografada);
         usuarioDTO.setStatus(true);
-        usuarioService.salvarUsuario(usuarioDTO);
+        usuarioServiceImpl.salvarUsuario(usuarioDTO);
         attributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
         return "redirect:/usuario/novo";
     }
 
     @GetMapping("/listar")
     public String listarUsuarios(Model model) {
-        List<UsuarioDTO> usuarios = usuarioService.listarUsuarios();
+        List<UsuarioDTO> usuarios = usuarioServiceImpl.listarUsuarios();
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
     }
@@ -78,7 +78,7 @@ public class UsuarioController {
 
         // Verifica se o usuário está tentando editar sua própria conta
         if (usuarioLogado.getId().equals(id)) {
-            UsuarioDTO usuario = usuarioService.buscarUsuarioPorId(id);
+            UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
 
             if (usuario != null) {
                 model.addAttribute("senha", usuario.getSenha());
@@ -90,7 +90,7 @@ public class UsuarioController {
             }
         } else {
             // Se não for o próprio usuário tentando se alterar, permite a edição normal
-            UsuarioDTO usuario = usuarioService.buscarUsuarioPorId(id);
+            UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
 
             if (usuario != null) {
                 model.addAttribute("senha", usuario.getSenha());
@@ -131,9 +131,9 @@ public class UsuarioController {
 
         // Atualiza a senha do usuário se fornecida
         if (usuarioDTO.getSenha() != null) {
-            usuarioService.atualizarUsuario(usuarioDTO);
+            usuarioServiceImpl.atualizarUsuario(usuarioDTO);
         }
-        usuarioService.atualizarUsuario(usuarioDTO);
+        usuarioServiceImpl.atualizarUsuario(usuarioDTO);
 
         // Redireciona para a página de listagem de usuários com uma mensagem de sucesso
         attributes.addFlashAttribute("mensagem", "Usuário atualizado com sucesso!");
@@ -142,7 +142,7 @@ public class UsuarioController {
 
     @GetMapping("/pesquisar")
     public String pesquisarUsuarioPorNome(@RequestParam("nome") String nome, Model model) {
-        List<UsuarioDTO> usuarios = usuarioService.pesquisarUsuarioPorNome(nome);
+        List<UsuarioDTO> usuarios = usuarioServiceImpl.pesquisarUsuarioPorNome(nome);
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
     }
@@ -151,7 +151,7 @@ public class UsuarioController {
     public String mudarStatusUsuario(@RequestParam Long id, RedirectAttributes attributes) {
         try {
             // Chama o método da service para mudar o status do usuário
-            usuarioService.mudarStatusUsuario(id);
+            usuarioServiceImpl.mudarStatusUsuario(id);
 
             attributes.addFlashAttribute("mensagem", "Status do usuário alterado com sucesso!");
         } catch (EntityNotFoundException ex) {

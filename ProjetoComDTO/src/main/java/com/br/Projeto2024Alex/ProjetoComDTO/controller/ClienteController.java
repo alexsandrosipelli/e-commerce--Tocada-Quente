@@ -4,10 +4,13 @@
  */
 package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
+import org.springframework.stereotype.Controller;
+
 /**
  *
  * @author alexs
  */
+@Controller
 public class ClienteController {
     
 }

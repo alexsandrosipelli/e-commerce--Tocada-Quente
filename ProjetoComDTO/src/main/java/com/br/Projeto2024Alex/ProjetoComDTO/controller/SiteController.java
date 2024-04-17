@@ -6,12 +6,9 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.service.ProdutoService;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ProdutoServiceImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SiteController {
 
     @Autowired
-    private ProdutoService produtoService;
+    private ProdutoServiceImpl produtoServiceImpl;
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
     @GetMapping
     public String inicial(Model model) {
-        List<ProdutoDTO> produtos = produtoService.listarProdutos();
+        List<ProdutoDTO> produtos = produtoServiceImpl.listarProdutos();
 
         // Para cada produto na lista de produtos, define o caminho da imagem principal
         produtos.forEach(produto -> produto.setImagemPrincipalString(produto.getImagemPrincipalStringIndex()));
@@ -44,7 +41,7 @@ public class SiteController {
 
     @GetMapping("/{id}")
     public String detalheProduto(@PathVariable Long id, Model model) {
-        ProdutoDTO produtoDTO = produtoService.buscarProdutoPorId(id);
+        ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
         int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
         ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
         produtoDTO.setImagemPrincipalString(imagemPrincipal.getCaminho());
@@ -52,5 +49,11 @@ public class SiteController {
         model.addAttribute(produtoDTO);
 
         return "Tela-apresentar-detalhe";
+    }
+
+    @GetMapping("/login")
+    public String loginCliente(){
+        // Tela ainda em desenvolvimento
+        return "telaAviso";
     }
 }
