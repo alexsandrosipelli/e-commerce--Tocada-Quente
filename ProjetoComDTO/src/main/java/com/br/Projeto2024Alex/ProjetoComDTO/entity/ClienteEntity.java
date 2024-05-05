@@ -7,12 +7,10 @@ package com.br.Projeto2024Alex.ProjetoComDTO.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -38,9 +36,7 @@ public class ClienteEntity {
 
     @NotNull
     @Column(name = "dataNascimento", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd") //Formato da data para o banco
-    @PastOrPresent //Garantir que a data informada é no passado ou no presente
-    private Date dataNascimento;
+    private String dataNascimento;
 
     @NotNull
     @Column(name = "genero", nullable = false)
@@ -52,19 +48,19 @@ public class ClienteEntity {
     private String email;
 
     @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "A senha deve conter no mínimo 3 e no máximo 100 caracteres")
     @Column(name = "senha", nullable = false)
     private String senha;
 
     @NotNull
     @CPF
-    @Column(name = "cpf", nullable = false)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
 
     @NotNull
-    @Size(min = 8, max = 8)
+    @Size(min = 8, max = 8, message = "O CEP deve ter no máximo e mínimo 8 números")
     @Column(name = "cep", nullable = false)
-    private Integer cep;
+    private String cep;
 
     @NotNull
     @Column(name = "cidade", nullable = false)

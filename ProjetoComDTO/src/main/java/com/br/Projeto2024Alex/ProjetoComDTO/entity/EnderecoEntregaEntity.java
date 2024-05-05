@@ -21,7 +21,7 @@ public class EnderecoEntregaEntity {
     @NotNull
     @Size(min = 8, max = 8)
     @Column(name = "cep", nullable = false)
-    private Integer cep;
+    private String cep;
 
     @NotNull
     @Column(name = "logradouro", nullable = false)

@@ -27,7 +27,7 @@ public class SiteController {
     private ProdutoServiceImpl produtoServiceImpl;
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
-    @GetMapping
+    @GetMapping("/")
     public String inicial(Model model) {
         List<ProdutoDTO> produtos = produtoServiceImpl.listarProdutos();
 
@@ -51,8 +51,8 @@ public class SiteController {
         return "Tela-apresentar-detalhe";
     }
 
-    @GetMapping("/login")
-    public String loginCliente(){
+    @GetMapping("/carrinho")
+    public String carrinho(){
         // Tela ainda em desenvolvimento
         return "telaAviso";
     }
