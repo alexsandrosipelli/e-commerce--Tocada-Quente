@@ -30,7 +30,7 @@ public class ClienteEntity {
     private Long id;
 
     @NotNull
-    @Size(min = 3, message = "O nome deve conter no mínimo 3 caracteres!")
+    @Size(min = 3, max = 100, message = "O nome deve conter no mínimo 3 caracteres!")
     @Column(name = "nome", nullable = false)
     private String nome;
 
