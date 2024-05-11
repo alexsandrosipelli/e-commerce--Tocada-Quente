@@ -24,7 +24,7 @@
                                 <div class="row mb-1">
                                     <div class="form-group">
                                         <label for="nome">Nome</label>
-                                        <input type="text" class="form-control" th:errorclass="is-invalid" id="nome" placeholder="Digite seu nome" th:field="*{nome}">
+                                        <input type="text" class="form-control" th:errorclass="is-invalid" id="nome" maxlength="100" placeholder="Digite seu nome" th:field="*{nome}">
                                         <div class="invalid-feedback" th:errors="*{nome}"></div>
                                     </div>
                                 </div>
@@ -48,14 +48,14 @@
                                 <div class="row mb-1">
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input type="email" class="form-control" th:errorclass="is-invalid" id="email" name="email" placeholder="Digite seu email" th:field="*{email}" >
+                                        <input type="email" class="form-control" th:errorclass="is-invalid" id="email" maxlength="80" name="email" placeholder="Digite seu email" th:field="*{email}" >
                                         <div class="invalid-feedback" th:errors="*{email}"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-1">
                                     <div class="form-group">
                                         <label for="senha">Senha</label>
-                                        <input type="password" class="form-control" th:errorclass="is-invalid" id="senha" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
+                                        <input type="password" class="form-control" th:errorclass="is-invalid" id="senha" maxlength="100" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
                                         <div class="invalid-feedback" th:errors="*{senha}"></div>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                                 <div class="row mb-1">
                                     <div class="form-group">
                                         <label for="cidade">Cidade</label>
-                                        <input type="text" class="form-control" th:errorclass="is-invalid" id="cidade" name="cidade" placeholder="Digite sua cidade" th:field="*{cidade}" >
+                                        <input type="text" class="form-control" th:errorclass="is-invalid" id="cidade" maxlength="60" name="cidade" placeholder="Digite sua cidade" th:field="*{cidade}" >
                                         <div class="invalid-feedback" th:errors="*{cidade}"></div>
                                     </div>
                                 </div>
