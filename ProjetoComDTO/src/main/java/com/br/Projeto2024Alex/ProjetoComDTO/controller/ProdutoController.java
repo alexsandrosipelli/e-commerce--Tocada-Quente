@@ -2,9 +2,8 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.service.ProdutoService;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ProdutoServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -35,7 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProdutoController {
 
     @Autowired
-    private ProdutoService produtoService;
+    private ProdutoServiceImpl produtoServiceImpl;
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
     /* Acessar a página de edição de produto */
@@ -45,7 +44,7 @@ public class ProdutoController {
         if (usuarioLogado == null) {
             return "redirect:/";
         }
-        ProdutoDTO produtoDTO = produtoService.buscarProdutoPorId(id);
+        ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
         String tipoUsuario = usuarioLogado.getGrupo();
         String caminhoImagemPrincipal = produtoDTO.getCaminhoImagemPrincipal();
         // Definir o caminho da imagem principal no produtoDTO
@@ -77,7 +76,7 @@ public class ProdutoController {
     @PostMapping("/produtos/editarEstoquista")
     public String editarProdutoEstoquista(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO) {
 
-        produtoService.editarProdutoEstoquista(produtoDTO);
+        produtoServiceImpl.editarProdutoEstoquista(produtoDTO);
         return "redirect:/produtos";
     }
 
@@ -88,7 +87,7 @@ public class ProdutoController {
             @RequestParam("imagens") List<MultipartFile> imagens,
             RedirectAttributes attributes) throws IOException {
         produtoDTO.getImagemPrincipal();
-        produtoService.editarProduto(produtoDTO, imagens);
+        produtoServiceImpl.editarProduto(produtoDTO, imagens);
 
         attributes.addFlashAttribute("mensagem", "Produto editado com sucesso!");
         return "redirect:/produtos";
@@ -106,7 +105,7 @@ public class ProdutoController {
         String tipoUsuario = usuarioLogado.getGrupo();
         model.addAttribute("tipoUsuario", tipoUsuario);
 
-        Page<ProdutoDTO> produtosPage = produtoService.listarProdutosPorNomePaginado(keyword, PageRequest.of(page, 10, Sort.by("id").descending()));
+        Page<ProdutoDTO> produtosPage = produtoServiceImpl.listarProdutosPorNomePaginado(keyword, PageRequest.of(page, 10, Sort.by("id").descending()));
         model.addAttribute("produtosPage", produtosPage);
         model.addAttribute("keyword", keyword);
         return "listar-Produtos";
@@ -130,7 +129,7 @@ public class ProdutoController {
             BindingResult result,
             @RequestParam("imagens") List<MultipartFile> imagens) throws IOException {
         produtoDTO.setStatus(true);
-        produtoService.criarProduto(produtoDTO, imagens); // Handle file processing errors
+        produtoServiceImpl.criarProduto(produtoDTO, imagens); // Handle file processing errors
 
         return "redirect:/produtos";
     }
@@ -140,7 +139,7 @@ public class ProdutoController {
     public String mudarStatusProduto(@RequestParam Long id, RedirectAttributes attributes) {
         try {
             // Chama o método da service para mudar o status do produto
-            produtoService.mudarStatusProduto(id);
+            produtoServiceImpl.mudarStatusProduto(id);
             attributes.addFlashAttribute("mensagem", "Produto alterado com sucesso!");
         } catch (EntityNotFoundException ex) {
             attributes.addFlashAttribute("mensagem", "Produto não encontrado!");
@@ -155,7 +154,7 @@ public class ProdutoController {
         if (usuarioLogado == null) {
             return "redirect:/";
         }
-        ProdutoDTO produto = produtoService.buscarProdutoPorId(id);
+        ProdutoDTO produto = produtoServiceImpl.buscarProdutoPorId(id);
 
         if (produto != null) {
             model.addAttribute("produto", produto);

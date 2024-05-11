@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.br.Projeto2024Alex.ProjetoComDTO.service;
+package com.br.Projeto2024Alex.ProjetoComDTO.service.impl;
 
 /**
  *
@@ -16,8 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CriadorProdutos {
-
+public class CriadorProdutosImpl {
     public static List<ProdutoDTO> criarProdutos() {
         List<ProdutoDTO> produtos = new ArrayList<>();
 
