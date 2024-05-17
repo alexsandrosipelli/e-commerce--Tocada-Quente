@@ -1,5 +1,7 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoViacepDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,13 @@ public class EnderecoController {
         this.enderecoService = enderecoService;
     }
 
-    @GetMapping("/consulta")
-    public ResponseEntity consultaCep(@RequestBody EnderecoViacepDTO enderecoRequest){
-        return ResponseEntity.ok(enderecoService.executa(enderecoRequest));
+    @GetMapping("/consulta/endereco-entrega")
+    public ResponseEntity<EnderecoEntregaDTO> consultaEnderecoEntrega(@RequestBody EnderecoViacepDTO enderecoRequest){
+        return ResponseEntity.ok(enderecoService.executaBuscaEnderecoEntrega(enderecoRequest));
+    }
+
+    @GetMapping("/consulta/enderec-faturamento")
+    public ResponseEntity<EnderecoFaturamentoDTO> consultaEnderecoFaturamento(@RequestBody EnderecoViacepDTO enderecoRequest){
+        return ResponseEntity.ok(enderecoService.executaBuscaEnderecoFaturamento(enderecoRequest));
     }
 }

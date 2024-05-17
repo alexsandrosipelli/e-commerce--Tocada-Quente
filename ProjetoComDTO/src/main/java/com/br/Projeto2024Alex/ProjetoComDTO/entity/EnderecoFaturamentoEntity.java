@@ -38,7 +38,7 @@ public class EnderecoFaturamentoEntity {
     private String bairro;
 
     @Column(name = "cidade", nullable = false)
-    private String cidade;
+    private String localidade;
 
     @Size(min = 2, max = 2)
     @Column(name = "uf", nullable = false)

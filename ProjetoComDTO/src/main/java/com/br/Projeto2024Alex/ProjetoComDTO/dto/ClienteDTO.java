@@ -57,7 +57,7 @@ public class ClienteDTO {
 
     @NotNull(message = "O campo Cidade não deve estar nulo")
     @NotBlank(message = "O campo Cidade não deve estar em branco")
-    private String cidade;
+    private String localidade;
 
     @NotNull(message = "O campo UF não deve estar nulo")
     @NotBlank(message = "O campo UF não deve estar em branco")

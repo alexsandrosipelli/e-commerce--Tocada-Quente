@@ -6,8 +6,11 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ImagemProdutoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ProdutoServiceImpl;
 import java.util.List;
+
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +31,13 @@ public class SiteController {
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
 
     @GetMapping("/")
-    public String inicial(Model model) {
+    public String inicial(Model model, HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/cliente/";
+        }
+
         List<ProdutoDTO> produtos = produtoServiceImpl.listarProdutos();
 
         // Para cada produto na lista de produtos, define o caminho da imagem principal
@@ -40,7 +49,13 @@ public class SiteController {
     }
 
     @GetMapping("/{id}")
-    public String detalheProduto(@PathVariable Long id, Model model) {
+    public String detalheProduto(@PathVariable Long id, Model model, HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/cliente/";
+        }
+
         ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
         int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
         ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);

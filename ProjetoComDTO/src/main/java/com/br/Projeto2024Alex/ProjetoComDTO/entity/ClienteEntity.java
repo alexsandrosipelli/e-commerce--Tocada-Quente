@@ -64,7 +64,7 @@ public class ClienteEntity {
 
     @NotNull
     @Column(name = "cidade", nullable = false)
-    private String cidade;
+    private String localidade;
 
     @NotNull
     @Column(name = "uf", nullable = false)

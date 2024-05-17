@@ -5,9 +5,13 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ClienteDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ClienteServiceImpl;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.EnderecoServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 /**
  *
  * @author alexs
@@ -26,7 +32,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/cliente")
 public class ClienteController {
     private final ClienteRepository clienteRepository;
-
     private final ClienteServiceImpl clienteServiceImpl;
     private final PasswordEncoder encoder;
 
@@ -56,7 +61,8 @@ public class ClienteController {
     @PostMapping("/salvar")
     public String salvarCliente(@Valid @ModelAttribute("cliente") ClienteDTO clienteDto, BindingResult result,
                                 RedirectAttributes attributes, HttpSession session){
-        return clienteServiceImpl.salvarCliente(clienteDto, result, attributes, encoder);
+
+        return clienteServiceImpl.salvarCliente(clienteDto, result, attributes);
     }
 
     @PostMapping("/loginCliente")
@@ -64,7 +70,7 @@ public class ClienteController {
         ClienteEntity cliente = clienteRepository.findByEmail(email);
         if (cliente != null) {
             if (encoder.matches(senha, cliente.getSenha())) {
-                    session.setAttribute("usuarioLogado", cliente);
+                    session.setAttribute("clienteLogado", cliente);
                     return "redirect:/site/";
             } else {
                 model.addAttribute("error", "Senha incorreta. Por favor, tente novamente.");
