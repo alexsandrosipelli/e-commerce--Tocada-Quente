@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Editar Perfil do Cliente</h2>
+                    <form th:action="@{/cliente/atualizar}" method="post" th:object="${clienteEditar}" class="gow g-3">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="nome">Nome</label>
+                                <input type="text" class="form-control" th:errorclass="is-invalid" id="nome" placeholder="Digite seu nome" th:field="*{nome}">
+                                <div class="invalid-feedback" th:errors="*{nome}"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="dataNascimento">Data de Nascimento</label>
+                                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" th:field="*{dataNascimento}" >
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="genero">Gênero</label>
+                                <select class="form-control" id="genero" name="genero" th:field="*{genero}" >
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="senha">Senha</label>
+                                <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
+                            </div>
+                        </div>
+                        <br>
+                        <h2 class="card-title text-center">Adicionar novo endereço</h2>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="cep">CEP</label>
+                                <input type="text" class="form-control" id="cep" name="cep" placeholder="Digite seu CEP" th:field="*{cep}" maxlength="8" >
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="localidade">Cidade</label>
+                                <input type="text" class="form-control" id="localidade" name="localidade" placeholder="Digite sua cidade" th:field="*{localidade}" >
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="uf">UF</label>
+                                <input type="text" class="form-control" id="uf" name="uf" placeholder="Digite seu estado" th:field="*{uf}" maxlength="2" >
+                            </div>
+                        </div>
+                        <!-- Adicione os campos para endereços de faturamento e entrega aqui -->
+                        <button type="submit" class="btn btn-primary btn-block">Atualizar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

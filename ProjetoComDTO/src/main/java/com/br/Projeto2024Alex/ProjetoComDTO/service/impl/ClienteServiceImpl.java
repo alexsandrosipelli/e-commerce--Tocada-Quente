@@ -9,21 +9,22 @@ import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoViacepDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoFaturamentoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
-import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
-import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoFaturamentoRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.ClienteService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -32,64 +33,38 @@ import java.util.List;
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
+    private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
     private final ClienteRepository clienteRepository;
     private final EnderecoServiceImpl enderecoServiceImpl;
-    private final EnderecoFaturamentoRepository enderecoFaturamentoRepository;
-    private final EnderecoEntregaRepository enderecoEntregaRepository;
 
     @Autowired
-    public ClienteServiceImpl(PasswordEncoder encoder, ClienteRepository repository, EnderecoServiceImpl enderecoServiceImpl,
-                              EnderecoFaturamentoRepository enderecoFaturamentoRepository, EnderecoEntregaRepository enderecoEntregaRepository) {
+    public ClienteServiceImpl(ModelMapper modelMapper, PasswordEncoder encoder, ClienteRepository repository, EnderecoServiceImpl enderecoServiceImpl) {
+        this.modelMapper = modelMapper;
         this.encoder = encoder;
         this.clienteRepository = repository;
         this.enderecoServiceImpl = enderecoServiceImpl;
-        this.enderecoFaturamentoRepository = enderecoFaturamentoRepository;
-        this.enderecoEntregaRepository = enderecoEntregaRepository;
     }
 
     @Override
-    public String salvarCliente(ClienteDTO clienteDto, BindingResult result, RedirectAttributes attributes) {
-        //TODO FALTA FAZER O CEP SER CONSULTADO NA API EXTERNA E PREENCHER OS CAMPOS COM O RESULTADO.
-        ModelMapper modelMapper = new ModelMapper();
-
-        boolean temErros = validacaoCamposCadastro(clienteDto, result);
-
+    public String salvarCliente(ClienteEntity clienteEntity, BindingResult result, RedirectAttributes attributes) {
+        ClienteDTO clienteDTO = modelMapper.map(clienteEntity, ClienteDTO.class);
+        boolean temErros = validacaoCamposCadastro(clienteDTO, result);
         if (temErros){
             return "criar-cliente";
         }else{
-            clienteDto = preencherCampos(clienteDto);
-            ClienteEntity clienteEntity = modelMapper.map(clienteDto, ClienteEntity.class);
-            clienteRepository.save(clienteEntity);
-            salvarEnderecos(clienteDto);
+            preencherCamposCadastro(clienteDTO);
+            ClienteEntity clienteSalvar = modelMapper.map(clienteDTO, ClienteEntity.class);
+            clienteRepository.save(clienteSalvar);
             return "redirect:/cliente/";
         }
     }
 
-    @Override
-    public void salvarEnderecos(ClienteDTO clienteDto) {
-        ModelMapper modelMapper = new ModelMapper();
-        ClienteEntity clienteEntity = clienteRepository.findByEmail(clienteDto.getEmail());
-        clienteDto = consultarCep(clienteEntity);
-        List<EnderecoFaturamentoDTO> listaEnderecoFaturamentoDto = clienteDto.getEnderecoFaturamentoDto();
-        List<EnderecoEntregaDTO> listaEnderecoEntregaDto = clienteDto.getEnderecoEntregaDto();
-
-        for (EnderecoFaturamentoDTO valores: listaEnderecoFaturamentoDto){
-            EnderecoFaturamentoEntity enderecoFaturamentoEntity = modelMapper.map(valores, EnderecoFaturamentoEntity.class);
-            enderecoFaturamentoRepository.save(enderecoFaturamentoEntity);
-        }
-
-        for (EnderecoEntregaDTO valores: listaEnderecoEntregaDto){
-            EnderecoEntregaEntity enderecoEntregaEntity = modelMapper.map(valores, EnderecoEntregaEntity.class);
-            enderecoEntregaRepository.save(enderecoEntregaEntity);
-        }
-    }
-
-    private ClienteDTO preencherCampos(ClienteDTO clienteDto) {
+    private void preencherCamposCadastro(ClienteDTO clienteDto) {
         clienteDto.setDataNascimento(clienteDto.getDataNascimento().replace("-", ""));
         String senhaCriptografada = encoder.encode(clienteDto.getSenha());
         clienteDto.setSenha(senhaCriptografada);
-        return clienteDto;
+        consultarCep(clienteDto);
     }
 
     private boolean validacaoCamposCadastro(ClienteDTO clienteDTO, BindingResult result) {
@@ -105,29 +80,81 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ClienteDTO consultarCep(ClienteEntity clienteEntity) {
-        ModelMapper modelMapper = new ModelMapper();
+    public void consultarCep(ClienteDTO clienteDTO) {
         EnderecoViacepDTO viacepDTO = new EnderecoViacepDTO();
-        List<EnderecoEntregaDTO> listaEnderecoEntrega = new ArrayList<>();
-        List<EnderecoFaturamentoDTO> listaEnderecoFaturamento = new ArrayList<>();
-        ClienteDTO clienteDTO = modelMapper.map(clienteEntity, ClienteDTO.class);
 
-        viacepDTO.setCep(clienteEntity.getCep());
+        viacepDTO.setCep(clienteDTO.getCep());
 
         EnderecoEntregaDTO enderecoEntregaDTO = enderecoServiceImpl.executaBuscaEnderecoEntrega(viacepDTO);
-        EnderecoFaturamentoDTO enderecoFaturamentoDto = enderecoServiceImpl.executaBuscaEnderecoFaturamento(viacepDTO);
+
+        EnderecoFaturamentoDTO enderecoFaturamentoDto = modelMapper.map(enderecoEntregaDTO, EnderecoFaturamentoDTO.class);
 
         enderecoEntregaDTO.setCliente(clienteDTO);
         enderecoFaturamentoDto.setCliente(clienteDTO);
 
-        listaEnderecoEntrega.add(enderecoEntregaDTO);
-        listaEnderecoFaturamento.add(enderecoFaturamentoDto);
-
         clienteDTO.setLocalidade(enderecoEntregaDTO.getLocalidade());
         clienteDTO.setUf(enderecoEntregaDTO.getUf());
-        clienteDTO.setEnderecoEntregaDto(listaEnderecoEntrega);
-        clienteDTO.setEnderecoFaturamentoDto(listaEnderecoFaturamento);
+        clienteDTO.setEnderecoEntregaDto(List.of(enderecoEntregaDTO));
+        clienteDTO.setEnderecoFaturamentoDto(List.of(enderecoFaturamentoDto));
+    }
 
-        return clienteDTO;
+    @Override
+    public String editarCliente(HttpSession session, Model model) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            String dataFormatada = formatarDataNascimento(clienteLogado.getDataNascimento());
+            ClienteDTO clienteDTO = modelMapper.map(clienteLogado, ClienteDTO.class);
+            clienteDTO.setDataNascimento(dataFormatada);
+            clienteDTO.setCep(null);
+            clienteDTO.setLocalidade(null);
+            clienteDTO.setUf(null);
+            model.addAttribute("clienteEditar", clienteDTO);
+            return "editar-cliente";
+        }
+        return "redirect:/cliente/";
+    }
+
+    private String formatarDataNascimento(String dataNascimento) {
+        DateTimeFormatter formatterEntrada = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter formatterSaida = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dataFormatada = LocalDate.parse(dataNascimento, formatterEntrada);
+        return dataFormatada.format(formatterSaida);
+    }
+
+    @Override
+    public String confirmarAtualizacao(ClienteDTO clienteDTO, BindingResult result, HttpSession session) {
+        /*
+        TODO AO TENTAR SALVAR, A DATA ESTÁ SENDO PASSADA COM '/', PRECISO REMOVER ELAS AO CONFIRMAR A ATUALIZAÇÃO DO REGISTRO
+         */
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            Optional<ClienteEntity> clienteBase = clienteRepository.findById(clienteLogado.getId());
+            if (clienteBase.isPresent()){
+                if (result.hasErrors()){
+                    return "editar-cliente";
+                }else{
+                    ClienteEntity clienteEntity = clienteBase.get();
+                    preencherCamposEditar(clienteEntity, clienteDTO);
+                    clienteRepository.save(clienteEntity);
+                    return "redirect:/cliente/loja/";
+                }
+            }else{
+                throw new EntityNotFoundException("Cliente não encontrado");
+            }
+        }else{
+            return "redirect:/cliente/";
+        }
+
+
+    }
+
+    private void preencherCamposEditar(ClienteEntity clienteEntity, ClienteDTO clienteDTO) {
+        clienteEntity.setNome(clienteDTO.getNome());
+        clienteEntity.setDataNascimento(clienteDTO.getDataNascimento());
+        clienteEntity.setGenero(clienteDTO.getGenero());
+        if (!clienteDTO.getSenha().isEmpty())
+            clienteEntity.setSenha(encoder.encode(clienteDTO.getSenha()));
+        clienteEntity.setEnderecosEntrega(null);
+        clienteEntity.setEnderecosFaturamento(null);
     }
 }
