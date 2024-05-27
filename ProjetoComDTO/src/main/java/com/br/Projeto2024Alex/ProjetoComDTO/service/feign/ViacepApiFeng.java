@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(url = "https://viacep.com.br/ws/", name = "guerra")
-public interface EnderecoFeign {
+public interface ViacepApiFeng {
 
     //Por ser uma API externa, não é possível debugar
     @GetMapping("{cep}/json/")

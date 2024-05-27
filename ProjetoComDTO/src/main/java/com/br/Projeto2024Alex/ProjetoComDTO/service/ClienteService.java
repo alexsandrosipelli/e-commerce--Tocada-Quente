@@ -16,4 +16,8 @@ public interface ClienteService {
     String editarCliente(HttpSession session, Model model);
 
     String confirmarAtualizacao(ClienteDTO clienteDTO, BindingResult result, HttpSession session);
+
+    String deslogarCliente(HttpSession session);
+
+    String listarEnderecos(Model model, HttpSession session);
 }

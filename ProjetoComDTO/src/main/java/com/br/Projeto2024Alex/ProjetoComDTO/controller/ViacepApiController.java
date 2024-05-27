@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/endereco")
 @RestController
-public class EnderecoController {
+public class ViacepApiController {
+
+    /*
+    TODO ADICIONAR ENDPOINT PARA CADASTRO DE NOVOS ENDEREÇOS, DESATIVAR ENDEREÇOS E TORNAR O ENDEREÇO ESCOLHIDO COMO PRINCIPAL
+    TODO ADICIONAR A TELA DO SPRINGWEB DO INDEX PARA LISTAR OS ENDEREÇOS E ADICIONAR O FORMULÁRIO DE CADASTRO DE CLIENTES NELE
+    PARA SER O FORMULÁRIO DE CADASTRO DOS NOVOS ENDEREÇOS
+     */
 
     private final EnderecoService enderecoService;
 
     @Autowired
-    public EnderecoController(EnderecoService enderecoService) {
+    public ViacepApiController(EnderecoService enderecoService) {
         this.enderecoService = enderecoService;
     }
 

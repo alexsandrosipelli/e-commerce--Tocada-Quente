@@ -2,6 +2,7 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.UsuarioRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.LoginServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,27 +31,7 @@ public class LoginController {
 
     @PostMapping("/paginaInicial")
     public String login(@RequestParam String email, @RequestParam String senha, Model model, HttpSession session) {
-        UsuarioEntity usuario = usuarioRepository.findByEmail(email);
-        if (usuario != null) {
-            if (encoder.matches(senha, usuario.getSenha())) {
-                if (usuario.isStatus()) {
-                    if (usuario.getGrupo().equals("ADMINISTRADOR")) {
-                        model.addAttribute("tipoUsuario", "ADMINISTRADOR");
-                    } else if (usuario.getGrupo().equals("ESTOQUISTA")) {
-                        model.addAttribute("tipoUsuario", "ESTOQUISTA");
-                    }
-                    session.setAttribute("usuarioLogado", usuario);
-                    return "pagina-principal";
-                } else {
-                    model.addAttribute("error", "Sua conta está inativa. Entre em contato com um administrador.");
-                }
-            } else {
-                model.addAttribute("error", "Senha incorreta. Por favor, tente novamente.");
-            }
-        } else {
-            model.addAttribute("error", "Usuário não encontrado. Por favor, verifique seu email.");
-        }
-        return "login";
+        return LoginServiceImpl.getInstance().efetuarLogin(email, senha, model, session, usuarioRepository, encoder);
     }
 
 }

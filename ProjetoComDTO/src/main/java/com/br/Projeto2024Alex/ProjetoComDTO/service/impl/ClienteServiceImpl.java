@@ -9,7 +9,9 @@ import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoViacepDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.ClienteService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,13 +39,15 @@ public class ClienteServiceImpl implements ClienteService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
     private final ClienteRepository clienteRepository;
+    private final EnderecoEntregaRepository enderecoEntregaRepository;
     private final EnderecoServiceImpl enderecoServiceImpl;
 
     @Autowired
-    public ClienteServiceImpl(ModelMapper modelMapper, PasswordEncoder encoder, ClienteRepository repository, EnderecoServiceImpl enderecoServiceImpl) {
+    public ClienteServiceImpl(ModelMapper modelMapper, PasswordEncoder encoder, ClienteRepository repository, EnderecoEntregaRepository enderecoEntregaRepository, EnderecoServiceImpl enderecoServiceImpl) {
         this.modelMapper = modelMapper;
         this.encoder = encoder;
         this.clienteRepository = repository;
+        this.enderecoEntregaRepository = enderecoEntregaRepository;
         this.enderecoServiceImpl = enderecoServiceImpl;
     }
 
@@ -94,8 +99,8 @@ public class ClienteServiceImpl implements ClienteService {
 
         clienteDTO.setLocalidade(enderecoEntregaDTO.getLocalidade());
         clienteDTO.setUf(enderecoEntregaDTO.getUf());
-        clienteDTO.setEnderecoEntregaDto(List.of(enderecoEntregaDTO));
-        clienteDTO.setEnderecoFaturamentoDto(List.of(enderecoFaturamentoDto));
+        clienteDTO.setEnderecoEntrega(List.of(enderecoEntregaDTO));
+        clienteDTO.setEnderecoFaturamento(List.of(enderecoFaturamentoDto));
     }
 
     @Override
@@ -123,9 +128,6 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public String confirmarAtualizacao(ClienteDTO clienteDTO, BindingResult result, HttpSession session) {
-        /*
-        TODO AO TENTAR SALVAR, A DATA ESTÁ SENDO PASSADA COM '/', PRECISO REMOVER ELAS AO CONFIRMAR A ATUALIZAÇÃO DO REGISTRO
-         */
         ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
         if (clienteLogado != null){
             Optional<ClienteEntity> clienteBase = clienteRepository.findById(clienteLogado.getId());
@@ -136,7 +138,7 @@ public class ClienteServiceImpl implements ClienteService {
                     ClienteEntity clienteEntity = clienteBase.get();
                     preencherCamposEditar(clienteEntity, clienteDTO);
                     clienteRepository.save(clienteEntity);
-                    return "redirect:/cliente/loja/";
+                    return "redirect:/cliente/loja";
                 }
             }else{
                 throw new EntityNotFoundException("Cliente não encontrado");
@@ -144,17 +146,42 @@ public class ClienteServiceImpl implements ClienteService {
         }else{
             return "redirect:/cliente/";
         }
+    }
 
+    @Override
+    public String deslogarCliente(HttpSession session) {
+        session.removeAttribute("clienteLogado");
+        // Invalidar a sessão (opcional, mas recomendado)
+        session.invalidate();
 
+        return "redirect:/cliente/loja";
+    }
+
+    @Override
+    public String listarEnderecos(Model model, HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            List<EnderecoEntregaEntity> enderecos = enderecoEntregaRepository.findByCliente(clienteLogado);
+            model.addAttribute("clienteEnderecos", enderecos);
+            return "listar-enderecos.html";
+        }
+        return "redirect:/cliente/";
     }
 
     private void preencherCamposEditar(ClienteEntity clienteEntity, ClienteDTO clienteDTO) {
         clienteEntity.setNome(clienteDTO.getNome());
-        clienteEntity.setDataNascimento(clienteDTO.getDataNascimento());
+        clienteEntity.setDataNascimento(clienteDTO.getDataNascimento().replace("-", ""));
         clienteEntity.setGenero(clienteDTO.getGenero());
         if (!clienteDTO.getSenha().isEmpty())
             clienteEntity.setSenha(encoder.encode(clienteDTO.getSenha()));
-        clienteEntity.setEnderecosEntrega(null);
-        clienteEntity.setEnderecosFaturamento(null);
+        if (!clienteDTO.getCep().isEmpty()){
+            consultarCep(clienteDTO);
+            clienteEntity.setCep(clienteDTO.getCep());
+            clienteEntity.setEnderecosEntrega(clienteDTO.toEntity().getEnderecosEntrega());
+            clienteEntity.setEnderecosFaturamento(clienteDTO.toEntity().getEnderecosFaturamento());
+        }else{
+            clienteEntity.setEnderecosEntrega(null);
+            clienteEntity.setEnderecosFaturamento(null);
+        }
     }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de Usuários</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h2 class="mt-5 mb-4">Listagem de Usuários</h2>
+    <div class="alert alert-success alert-dismissible fade show" th:if="${mensagem}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span th:text="${mensagem}"></span>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show" th:if="${erros}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span th:text="${erros}"></span>
+    </div>
+
+    <!-- Botão de cadastro de usuário -->
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#cadastrarUsuarioModal">Cadastrar Usuário</button>
+
+    <!-- Formulário de pesquisa -->
+    <form class="form-inline mb-3" method="get" action="#" th:action="@{/usuario/listar}">
+        <input class="form-control mr-sm-2" type="search" name="filtro" placeholder="Filtrar por nome" aria-label="Pesquisar">
+        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Pesquisar</button>
+    </form>
+
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Grupo</th>
+            <th>Status</th>
+            <th>Ações</th> <!-- Nova coluna para ações -->
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
+        <tr th:each="endereco : ${enderecos}">
+            <td th:text="${endereco.id}"></td>
+            <td th:text="${endereco.cep}"></td>
+            <td th:text="${endereco.logradouro}"></td>
+            <td th:text="${endereco.complemento}"></td>
+            <td th:text="${endereco.bairro}"></td>
+            <td th:text="${endereco.localidade}"></td>
+            <td th:text="${endereco.uf}"></td>
+            <td>
+                <span th:if="${endereco.status == 1}">Endereço Principal</span>
+                <span th:if="${endereco.status == 0}">Endereço não Principal</span>
+            </td>
+            <!-- Coluna de ações -->
+            <td>
+                <form th:action="@{'/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                    <button type="submit" class="btn btn-warning btn-sm">Excluir endereço</button>
+                </form>
+                <form th:action="@{'/cliente/enderecos/principal/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                    <button type="submit" class="btn btn-warning btn-sm" th:text="${endereco.status == 1} ? 'Remover status principal' : 'Alterar para principal'"></button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+<script>
+    function confirmarMudancaStatus() {
+        return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

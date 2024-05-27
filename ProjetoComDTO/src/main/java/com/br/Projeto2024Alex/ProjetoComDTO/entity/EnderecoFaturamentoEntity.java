@@ -50,6 +50,12 @@ public class EnderecoFaturamentoEntity {
     @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteEntity cliente;
 
+    @Column(name = "enderecoPrincipal")
+    private boolean enderecoPrincipal;
+
+    @Column(name = "status")
+    private boolean status;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_inclusao", nullable = false, updatable = false)
     private Date dataInclusao = new Date();

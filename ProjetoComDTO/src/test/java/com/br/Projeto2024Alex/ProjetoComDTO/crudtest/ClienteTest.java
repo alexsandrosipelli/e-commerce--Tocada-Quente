@@ -48,7 +48,9 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
         listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
@@ -59,11 +61,13 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
-        clienteDTO.setEnderecoEntregaDto(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamentoDto(listaEnderecosFaturamento);
+        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
+        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
 
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
@@ -95,7 +99,9 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
         listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
@@ -106,11 +112,13 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
-        clienteDTO.setEnderecoEntregaDto(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamentoDto(listaEnderecosFaturamento);
+        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
+        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
 
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
@@ -144,7 +152,9 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
         listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
@@ -155,11 +165,13 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
-        clienteDTO.setEnderecoEntregaDto(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamentoDto(listaEnderecosFaturamento);
+        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
+        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
 
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
@@ -199,7 +211,9 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
         listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
@@ -210,11 +224,13 @@ public class ClienteTest {
                 "Jurubatuba",
                 "São Paulo",
                 clienteDTO,
-                "SP"
+                "SP",
+                false,
+                false
         ));
 
-        clienteDTO.setEnderecoEntregaDto(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamentoDto(listaEnderecosFaturamento);
+        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
+        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
 
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);

@@ -11,7 +11,8 @@ public class EnderecoEntregaDTO {
     }
 
     public EnderecoEntregaDTO(String cep, String logradouro, String numero, String complemento, String bairro,
-                              String localidade, ClienteDTO cliente, String uf) {
+                              String localidade, ClienteDTO cliente, String uf, boolean enderecoPrincipal,
+                              boolean status) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.numero = numero;
@@ -20,6 +21,8 @@ public class EnderecoEntregaDTO {
         this.localidade = localidade;
         this.cliente = cliente;
         this.uf = uf;
+        this.enderecoPrincipal = enderecoPrincipal;
+        this.status = status;
     }
 
     private Long id;
@@ -31,4 +34,6 @@ public class EnderecoEntregaDTO {
     private String localidade;
     private ClienteDTO cliente;
     private String uf;
+    private boolean enderecoPrincipal;
+    private boolean status;
 }

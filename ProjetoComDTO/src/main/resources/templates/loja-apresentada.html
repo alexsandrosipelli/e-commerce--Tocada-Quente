@@ -101,9 +101,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" th:href="@{/cliente/editar}">Editar Perfil</a>
-                    <a class="dropdown-item" th:href="@{/site/carrinho}">Excluir Conta</a>
+                    <a class="dropdown-item" th:href="@{/site/carrinho}">Editar Endereços</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" th:href="@{/site/carrinho}">Sair</a>
+                    <form th:action="@{/cliente/sair}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                        <button type="submit" class="dropdown-item">Sair</button>
+                    </form>
                 </div>
             </li>
             <li class="nav-item">
@@ -130,7 +132,11 @@
         </div>
     </div>
 </div>
-
+<script>
+    function confirmarMudancaStatus() {
+        return confirm("Tem certeza que deseja sair?")
+    }
+</script>
 <!-- Link para o JavaScript do Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

@@ -69,6 +69,11 @@ public class ClienteController {
         return clienteServiceImpl.editarCliente(session, model);
     }
 
+    @PostMapping("/sair")
+    public String deslogarCliente(HttpSession session){
+        return clienteServiceImpl.deslogarCliente(session);
+    }
+
     @PostMapping("/atualizar")
     public String atualizarCliente(@Valid @ModelAttribute("clienteEditar") ClienteDTO clienteDTO, BindingResult result,
                                    HttpSession session){
@@ -90,5 +95,10 @@ public class ClienteController {
             model.addAttribute("error", "Cliente não encontrado. Por favor, verifique seu email.");
         }
         return "login-cliente";
+    }
+
+    @GetMapping("/enderecos")
+    public String listarEnderecos(Model model, HttpSession session){
+        return clienteServiceImpl.listarEnderecos(model, session);
     }
 }

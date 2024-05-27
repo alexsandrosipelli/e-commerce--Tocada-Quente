@@ -5,13 +5,8 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.dto;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
@@ -30,8 +25,8 @@ public class ClienteDTO {
     private String cep;
     private String localidade;
     private String uf;
-    private List<EnderecoFaturamentoDTO> enderecoFaturamentoDto;
-    private List<EnderecoEntregaDTO> enderecoEntregaDto;
+    private List<EnderecoFaturamentoDTO> enderecoFaturamento;
+    private List<EnderecoEntregaDTO> enderecoEntrega;
 
     public static ClienteDTO fromEntity(ClienteDTO usuario) {
         ClienteDTO clienteDto = new ClienteDTO();
