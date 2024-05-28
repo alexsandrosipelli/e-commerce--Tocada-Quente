@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.br.CPF;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -81,10 +82,10 @@ public class ClienteEntity {
     private String uf;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<EnderecoFaturamentoEntity> enderecosFaturamento;
+    private List<EnderecoFaturamentoEntity> enderecosFaturamento = new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<EnderecoEntregaEntity> enderecosEntrega;
+    private List<EnderecoEntregaEntity> enderecosEntrega = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP) //Indica que o dado é do tipo de data e hora do banco de dados
     @Column(name = "data_inclusao", nullable = false, updatable = false) //Esse campo não vai ser atualizado
