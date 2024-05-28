@@ -66,7 +66,7 @@ public class SiteController {
         return "Tela-apresentar-detalhe";
     }
 
-    @GetMapping("/carrinho")
+    @GetMapping("/desenvolvendo")
     public String carrinho(){
         // Tela ainda em desenvolvimento
         return "telaAviso";

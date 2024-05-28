@@ -5,7 +5,9 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ClienteDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ClienteServiceImpl;
 import jakarta.servlet.http.HttpSession;
@@ -44,11 +46,7 @@ public class ClienteController {
 
     @GetMapping("/loja")
     public String lojaApresentada(Model model, HttpSession session){
-        ClienteEntity cliente = (ClienteEntity) session.getAttribute(CLIENTE_LOGADO);
-        if (cliente != null) {
-            model.addAttribute(CLIENTE_LOGADO, cliente);
-        }
-        return "loja-apresentada";
+        return clienteServiceImpl.apresentarLoja(model, session);
     }
 
     @GetMapping("/novo")
@@ -62,6 +60,12 @@ public class ClienteController {
                                 RedirectAttributes attributes, HttpSession session){
 
         return clienteServiceImpl.salvarCliente(clienteEntity, result, attributes);
+    }
+
+    @PostMapping("/enderecos/salvar")
+    public String salvarEndereco(@Valid @ModelAttribute("enderecos") EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result,
+                                RedirectAttributes attributes, HttpSession session){
+        return clienteServiceImpl.salvarEndereco(enderecoEntregaDTO, result, attributes);
     }
 
     @GetMapping("/editar")
@@ -100,5 +104,21 @@ public class ClienteController {
     @GetMapping("/enderecos")
     public String listarEnderecos(Model model, HttpSession session){
         return clienteServiceImpl.listarEnderecos(model, session);
+    }
+
+    @GetMapping("/enderecos/novo")
+    public String adicionarEndereco(Model model, HttpSession session){
+        return clienteServiceImpl.novoEndereco(model, session);
+    }
+
+    @PostMapping("/enderecos/desativar/{id}")
+    public String desativarEndereco(@PathVariable Long id, Model model, HttpSession session){
+        return clienteServiceImpl.desativarEndereco(id, model, session);
+    }
+
+    @PostMapping("/enderecos/principal/{id}")
+    public String desativarUsuario(@PathVariable Long id, Model model, HttpSession session) {
+        clienteServiceImpl.alterarEnderecoPrincipal(id);
+        return "redirect:/usuario/listar";
     }
 }

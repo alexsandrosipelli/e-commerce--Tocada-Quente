@@ -18,7 +18,7 @@ public class EnderecoEntregaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "O campo CEP não deve estar nulo")
     @Size(min = 8, max = 8)
     @Column(name = "cep", nullable = false)
     private String cep;
@@ -42,6 +42,7 @@ public class EnderecoEntregaEntity {
     @Column(name = "cidade", nullable = false)
     private String localidade;
 
+    @NotNull(message = "O campo UF não deve estar nulo")
     @Size(min = 2, max = 2)
     @Column(name = "uf", nullable = false)
     private String uf;

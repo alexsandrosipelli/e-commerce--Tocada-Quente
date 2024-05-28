@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <title>Listagem de Usuários</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1{
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h2 class="mt-5 mb-4">Listagem de Usuários</h2>
+    <h2 class="mt-5 mb-4">Listagem de Endereços</h2>
     <div class="alert alert-success alert-dismissible fade show" th:if="${mensagem}">
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         <span th:text="${mensagem}"></span>
@@ -17,12 +22,11 @@
         <span th:text="${erros}"></span>
     </div>
 
-    <!-- Botão de cadastro de usuário -->
-    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#cadastrarUsuarioModal">Cadastrar Usuário</button>
+    <!-- Formulário de pesquisa -->
+    <a type="button" class="btn btn-primary mb-3" th:href="@{/site/desenvolvendo}">Cadastrar Endereço</a>
 
     <!-- Formulário de pesquisa -->
-    <form class="form-inline mb-3" method="get" action="#" th:action="@{/usuario/listar}">
-        <input class="form-control mr-sm-2" type="search" name="filtro" placeholder="Filtrar por nome" aria-label="Pesquisar">
+    <form class="form-inline mb-3" method="get" th:action="@{/cliente/enderecos}">
         <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Pesquisar</button>
     </form>
 
@@ -30,14 +34,19 @@
         <thead class="thead-dark">
         <tr>
             <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Grupo</th>
+            <th>CEP</th>
+            <th>Logradouro</th>
+            <th>Complemento</th>
+            <th>Bairro</th>
+            <th>Localidade</th>
+            <th>UF</th>
             <th>Status</th>
-            <th>Ações</th> <!-- Nova coluna para ações -->
         </tr>
         </thead>
         <tbody>
+        <tr th:if="${#lists.isEmpty(enderecos)}">
+            <td colspan="7" class="text-center">NENHUM ENDEREÇO CARREGADO</td>
+        </tr>
         <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
         <tr th:each="endereco : ${enderecos}">
             <td th:text="${endereco.id}"></td>
@@ -53,7 +62,7 @@
             </td>
             <!-- Coluna de ações -->
             <td>
-                <form th:action="@{'/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                <form th:action="@{'/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return excluirEndereco()" style="display: inline">
                     <button type="submit" class="btn btn-warning btn-sm">Excluir endereço</button>
                 </form>
                 <form th:action="@{'/cliente/enderecos/principal/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
@@ -68,7 +77,10 @@
 </body>
 <script>
     function confirmarMudancaStatus() {
-        return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
+        return confirm("Tem certeza que deseja mudar o status do endereço selecionado?")
+    }
+    function excluirEndereco() {
+        return confirm("Tem certeza que deseja excluir o endereço?")
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -1,5 +1,7 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,6 +28,8 @@ public class EnderecoEntregaDTO {
     }
 
     private Long id;
+    @NotNull(message = "O campo CEP não deve estar nulo")
+    @NotBlank(message = "O campo CEP não deve estar vazio")
     private String cep;
     private String logradouro;
     private String numero;

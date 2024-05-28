@@ -11,6 +11,9 @@
     <!-- Link para o CSS personalizado -->
     <link href="/css/custom.css" rel="stylesheet">
     <style>
+        h1{
+            text-align: center;
+        }
         /* Estilos personalizados */
         body {
             background-color: #000000;
@@ -101,7 +104,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" th:href="@{/cliente/editar}">Editar Perfil</a>
-                    <a class="dropdown-item" th:href="@{/site/carrinho}">Editar Endereços</a>
+                    <a class="dropdown-item" th:href="@{/cliente/enderecos}">Editar Endereços</a>
                     <div class="dropdown-divider"></div>
                     <form th:action="@{/cliente/sair}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
                         <button type="submit" class="dropdown-item">Sair</button>
@@ -109,7 +112,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/site/carrinho}">
+                <a class="nav-link" th:href="@{/site/desenvolvendo}">
                     <i class="bi bi-cart-fill"></i>
                 </a>
             </li>
@@ -120,6 +123,9 @@
 <!-- Lista de produtos em cards -->
 <div class="container mt-5">
     <div class="row">
+        <th:block th:if="${produtos == null}">
+            <h1>NENHUM PRODUTO CARREGADO</h1>
+        </th:block>
         <div class="col-md-3 mb-3" th:each="produto : ${produtos}">
             <div class="card">
                 <img th:src="@{'/imagem/' + ${produto.imagemPrincipalString}}" class="card-img-top" alt="Imagem do produto">
