@@ -32,12 +32,6 @@ public class SiteController {
 
     @GetMapping("/")
     public String inicial(Model model, HttpSession session) {
-        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
-
-        if (clienteLogado == null) {
-            return "redirect:/cliente/";
-        }
-
         List<ProdutoDTO> produtos = produtoServiceImpl.listarProdutos();
 
         // Para cada produto na lista de produtos, define o caminho da imagem principal

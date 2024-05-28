@@ -22,5 +22,6 @@ public class LoginTest {
         UsuarioEntity entity = repository.findByEmail("usuarioteste1@gmail.com");
 
         assertTrue(encoder.matches("1234", entity.getSenha()));
+        repository.deleteByEmailStartingWithUsuarioTeste();
     }
 }

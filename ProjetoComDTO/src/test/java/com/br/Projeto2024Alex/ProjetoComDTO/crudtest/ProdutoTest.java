@@ -129,5 +129,7 @@ public class ProdutoTest {
 
         // Verificar se o produto foi excluído com sucesso
         assertNull(repository.findById(produtoEntity.getId()).orElse(null));
+        imagemProdutoRepository.deleteByCaminhoStartingWithImagemTeste();
+        repository.deleteByNomeStartingWithProdutoTeste();
     }
 }

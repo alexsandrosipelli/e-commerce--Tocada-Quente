@@ -5,6 +5,8 @@ import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoFaturamentoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +24,12 @@ public class ClienteTest {
 
     @Autowired
     private ClienteRepository repository;
+
+    @Autowired
+    private EnderecoEntregaRepository enderecoEntregaRepository;
+
+    @Autowired
+    private EnderecoFaturamentoRepository enderecoFaturamentoRepository;
 
     @Test
     void testeCadastroCliente(){
@@ -238,5 +246,7 @@ public class ClienteTest {
         repository.delete(clienteEntity);
 
         assertNull(repository.findById(clienteEntity.getId()).orElse(null));
+        enderecoEntregaRepository.deleteByComplementoStartingWithEntregaTeste();
+        enderecoFaturamentoRepository.deleteByComplementoStartingWithFaturamentoTeste();
     }
 }

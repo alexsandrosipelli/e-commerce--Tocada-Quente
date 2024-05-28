@@ -3,8 +3,10 @@ package com.br.Projeto2024Alex.ProjetoComDTO.repository;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,4 +19,9 @@ public interface EnderecoEntregaRepository extends JpaRepository<EnderecoEntrega
 
     @Query("select e from EnderecoEntregaEntity e where e.cliente.id = ?1 and (e.enderecoPrincipal = false or e.enderecoPrincipal is null)")
     List<EnderecoEntregaEntity> findNonPrimaryOrUnsetEnderecosByClienteId(Long clienteId);
+
+    @Transactional
+    @Modifying
+    @Query("delete from EnderecoEntregaEntity e where e.complemento like 'Endereco Teste%'")
+    void deleteByComplementoStartingWithEntregaTeste();
 }
