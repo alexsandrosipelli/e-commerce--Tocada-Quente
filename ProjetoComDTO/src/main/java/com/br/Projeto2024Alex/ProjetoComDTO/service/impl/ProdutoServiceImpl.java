@@ -42,54 +42,6 @@ public class ProdutoServiceImpl implements ProdutoService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
-        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
-        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
-    }
-
-    @Transactional
-    public void editarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
-        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
-
-        // Atualiza todas as informações do produto com base nos dados do DTO
-        produtoEntity.setNome(produtoDTO.getNome());
-        produtoEntity.setAvaliacao(produtoDTO.getAvaliacao());
-        produtoEntity.setDescricaoDetalhada(produtoDTO.getDescricaoDetalhada());
-        produtoEntity.setPrecoProduto(produtoDTO.getPrecoProduto());
-        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
-
-        // Se entrar nesse if é pq tem img nova
-        if (!imagens.getFirst().getOriginalFilename().equals("")) {
-            // Salva as novas imagens e atualiza as imagens do produtoEntity
-            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
-            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
-            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
-                // Define a nova imagem principal entre as imagens existentes
-                for (int i = 0; i < imagensProduto.size(); i++) {
-                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
-                }
-            }
-            salvarImagensProdutoEdicao(produtoEntity, imagens, produtoDTO.getImagemPrincipal());
-
-        } else {
-            // Se não foram enviadas novas imagens, verifica se o índice da imagem principal é válido
-            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
-            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
-            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
-                // Define a nova imagem principal entre as imagens existentes
-                for (int i = 0; i < imagensProduto.size(); i++) {
-                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
-                }
-            }
-        }
-
-        // Salva as alterações no banco de dados
-        produtoRepository.save(produtoEntity);
-    }
-
     private void salvarImagensProdutoEdicao(ProdutoEntity produtoEntity, List<MultipartFile> imagens, int indiceImagemPrincipal) throws IOException {
         // Salvar as novas imagens no diretório e obter os caminhos salvos
         String[] caminhosImagens = salvarImagensEdicao(imagens);
@@ -259,5 +211,54 @@ public class ProdutoServiceImpl implements ProdutoService {
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
 
         return modelMapper.map(produtoEntity, ProdutoEntity.class);
+    }
+
+    @Transactional
+    public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
+        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
+        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
+    }
+
+    @Transactional
+    /*tratar como uma transação*/
+    public void editarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
+        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
+
+        // Atualiza todas as informações do produto com base nos dados do DTO
+        produtoEntity.setNome(produtoDTO.getNome());
+        produtoEntity.setAvaliacao(produtoDTO.getAvaliacao());
+        produtoEntity.setDescricaoDetalhada(produtoDTO.getDescricaoDetalhada());
+        produtoEntity.setPrecoProduto(produtoDTO.getPrecoProduto());
+        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
+
+        // Se entrar nesse if é pq tem img nova
+        if (!imagens.getFirst().getOriginalFilename().equals("")) {
+            // Salva as novas imagens e atualiza as imagens do produtoEntity
+            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
+            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
+            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
+                // Define a nova imagem principal entre as imagens existentes
+                for (int i = 0; i < imagensProduto.size(); i++) {
+                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
+                }
+            }
+            salvarImagensProdutoEdicao(produtoEntity, imagens, produtoDTO.getImagemPrincipal());
+
+        } else {
+            // Se não foram enviadas novas imagens, verifica se o índice da imagem principal é válido
+            int indiceImagemPrincipal = produtoDTO.getImagemPrincipal();
+            List<ImagemProdutoEntity> imagensProduto = produtoEntity.getImagens();
+            if (indiceImagemPrincipal >= 0 && indiceImagemPrincipal < imagensProduto.size()) {
+                // Define a nova imagem principal entre as imagens existentes
+                for (int i = 0; i < imagensProduto.size(); i++) {
+                    imagensProduto.get(i).setPrincipal(i == indiceImagemPrincipal);
+                }
+            }
+        }
+
+        // Salva as alterações no banco de dados
+        produtoRepository.save(produtoEntity);
     }
 }

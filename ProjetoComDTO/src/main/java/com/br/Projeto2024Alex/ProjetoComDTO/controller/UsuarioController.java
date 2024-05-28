@@ -5,14 +5,12 @@ import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.UsuarioServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
-
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,6 +27,13 @@ public class UsuarioController {
     public UsuarioController(UsuarioServiceImpl usuarioServiceImpl, PasswordEncoder passwordEncoder) {
         this.usuarioServiceImpl = usuarioServiceImpl;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/listar")
+    public String listarUsuarios(Model model) {
+        List<UsuarioDTO> usuarios = usuarioServiceImpl.listarUsuarios();
+        model.addAttribute("usuarios", usuarios);
+        return "lista-usuarios";
     }
 
     @GetMapping("/novo")
@@ -60,16 +65,11 @@ public class UsuarioController {
         String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
         usuarioDTO.setSenha(senhaCriptografada);
         usuarioDTO.setStatus(true);
+        
         usuarioServiceImpl.salvarUsuario(usuarioDTO);
+        
         attributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
         return "redirect:/usuario/novo";
-    }
-
-    @GetMapping("/listar")
-    public String listarUsuarios(Model model) {
-        List<UsuarioDTO> usuarios = usuarioServiceImpl.listarUsuarios();
-        model.addAttribute("usuarios", usuarios);
-        return "lista-usuarios";
     }
 
     @GetMapping("/editar/{id}")

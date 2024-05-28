@@ -21,7 +21,7 @@ public class UsuarioEntity {
     private Long id;
 
     @NotNull
-    @Size(min = 3, message = "O nome deve conter no mínimo 3 caracteres!")
+    @Size(min = 3, message = "O nome deve conter no mínimo 3 caracteres!",max = 100)
     @Column(name = "nome", nullable = false)
     private String nome;
 
@@ -41,6 +41,7 @@ public class UsuarioEntity {
     private String CPF;
 
     @NotNull
+    /*permitir apenas um ou outro*/
     @Pattern(regexp = "ESTOQUISTA|ADMINISTRADOR")
     @Column(name = "grupo", nullable = false)
     private String grupo;
@@ -116,7 +117,7 @@ public class UsuarioEntity {
         this.status = status;
     }
 
-    // Getters e Setters omitidos por brevidade
+    
     @Override
     public int hashCode() {
         int hash = 3;

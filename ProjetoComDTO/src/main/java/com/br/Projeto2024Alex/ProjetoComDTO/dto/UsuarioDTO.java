@@ -1,5 +1,6 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.dto;
 
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.BeanUtils;
@@ -16,19 +17,7 @@ public class UsuarioDTO {
     private String grupo;
     private boolean status;
     private String senha;
-    private String confirmacaoSenha; // Adicionando o campo confirmacaoSenha
-
-    public String getConfirmacaoSenha() {
-        return confirmacaoSenha;
-    }
-
-    public void setConfirmacaoSenha(String confirmacaoSenha) {
-        this.confirmacaoSenha = confirmacaoSenha;
-    }
-
-    public boolean isNomeValido() {
-        return StringUtils.hasText(nome) && nome.matches("^[a-zA-Z\\s]+$");
-    }
+    private String confirmacaoSenha;
 
     public UsuarioDTO() {
     }
@@ -51,15 +40,14 @@ public class UsuarioDTO {
         this.status = other.status;
     }
 
-    
-    public static UsuarioDTO fromEntity(com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity usuario) {
+    public static UsuarioDTO fromEntity(UsuarioEntity usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         BeanUtils.copyProperties(usuario, usuarioDTO);
         return usuarioDTO;
     }
 
-    public com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity toEntity() {
-        com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity usuarioEntity = new com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity();
+    public UsuarioEntity toEntity() {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
         BeanUtils.copyProperties(this, usuarioEntity);
         return usuarioEntity;
     }
@@ -118,6 +106,18 @@ public class UsuarioDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getConfirmacaoSenha() {
+        return confirmacaoSenha;
+    }
+
+    public void setConfirmacaoSenha(String confirmacaoSenha) {
+        this.confirmacaoSenha = confirmacaoSenha;
+    }
+
+    public boolean isNomeValido() {
+        return StringUtils.hasText(nome) && nome.matches("^[a-zA-Z\\s]+$");
     }
 
 }
