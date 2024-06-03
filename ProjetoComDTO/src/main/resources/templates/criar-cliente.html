@@ -69,6 +69,20 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12">
+                                <label for="numero">Número</label>
+                                <input type="number" class="form-control" th:errorclass="is-invalid" id="numero" name="numero" placeholder="Digite seu número" th:field="*{numero}" oninput="this.value = this.value.slice(0, 8)">
+                                <div class="invalid-feedback" th:errors="*{numero}"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="complemento">Complemento</label>
+                                <input type="complemento" class="form-control" th:errorclass="is-invalid" id="complemento" name="complemento" placeholder="Digite o complemento do endereço" th:field="*{complemento}">
+                                <div class="invalid-feedback" th:errors="*{complemento}"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
                                 <label for="localidade">Cidade</label>
                                 <input type="text" class="form-control" th:errorclass="is-invalid" id="localidade" name="localidade" placeholder="Digite sua cidade" th:field="*{localidade}" >
                                 <div class="invalid-feedback" th:errors="*{localidade}"></div>
@@ -89,6 +103,13 @@
         </div>
     </div>
 </div>
+<script>
+    // Limitar a entrada para 8 caracteres do número
+    const numeroInput = document.getElementById('numero');
+    numeroInput.addEventListener('input', () => {
+        numeroInput.value = numeroInput.value.slice(0, 8);
+    });
+</script>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

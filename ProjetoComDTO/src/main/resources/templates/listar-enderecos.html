@@ -22,25 +22,26 @@
         <span th:text="${erros}"></span>
     </div>
 
-    <!-- Formulário de pesquisa -->
-    <a type="button" class="btn btn-primary mb-3" th:href="@{/site/desenvolvendo}">Cadastrar Endereço</a>
+    <a class="btn btn-secondary mb-3" th:href="@{/site/}">Voltar ao Menu da Loja</a>
 
     <!-- Formulário de pesquisa -->
-    <form class="form-inline mb-3" method="get" th:action="@{/cliente/enderecos}">
+    <a type="button" class="btn btn-primary mb-3" th:href="@{/site/cliente/enderecos/novo}">Cadastrar Endereço</a>
+
+    <!-- Formulário de pesquisa -->
+    <form class="form-inline mb-3" method="get" th:action="@{/site/cliente/enderecos}">
         <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Pesquisar</button>
     </form>
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
         <tr>
-            <th>ID</th>
             <th>CEP</th>
             <th>Logradouro</th>
             <th>Complemento</th>
             <th>Bairro</th>
             <th>Localidade</th>
             <th>UF</th>
-            <th>Status</th>
+            <th>Endereço Principal</th>
         </tr>
         </thead>
         <tbody>
@@ -49,7 +50,6 @@
         </tr>
         <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
         <tr th:each="endereco : ${enderecos}">
-            <td th:text="${endereco.id}"></td>
             <td th:text="${endereco.cep}"></td>
             <td th:text="${endereco.logradouro}"></td>
             <td th:text="${endereco.complemento}"></td>
@@ -57,16 +57,27 @@
             <td th:text="${endereco.localidade}"></td>
             <td th:text="${endereco.uf}"></td>
             <td>
-                <span th:if="${endereco.status == 1}">Endereço Principal</span>
-                <span th:if="${endereco.status == 0}">Endereço não Principal</span>
+                <th:block th:if="${endereco.enderecoPrincipal == true}">
+                    <span>Sim</span>
+                </th:block>
+                <th:block th:if="${endereco.enderecoPrincipal == false}">
+                    <span>Não</span>
+                </th:block>
             </td>
             <!-- Coluna de ações -->
             <td>
-                <form th:action="@{'/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return excluirEndereco()" style="display: inline">
+                <form th:action="@{'/site/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return excluirEndereco()" style="display: inline">
                     <button type="submit" class="btn btn-warning btn-sm">Excluir endereço</button>
                 </form>
-                <form th:action="@{'/cliente/enderecos/principal/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
-                    <button type="submit" class="btn btn-warning btn-sm" th:text="${endereco.status == 1} ? 'Remover status principal' : 'Alterar para principal'"></button>
+                <form th:action="@{'/site/cliente/enderecos/principal/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                    <button type="submit" class="btn btn-warning btn-sm">
+                        <th:block th:if="${endereco.enderecoPrincipal == true}">
+                            Remover status principal
+                        </th:block>
+                        <th:block th:if="${endereco.enderecoPrincipal == false}">
+                            Alterar para principal
+                        </th:block>
+                    </button>
                 </form>
             </td>
         </tr>

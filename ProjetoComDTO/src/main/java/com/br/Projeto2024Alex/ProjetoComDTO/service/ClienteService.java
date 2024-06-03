@@ -13,8 +13,6 @@ public interface ClienteService {
 
     String salvarCliente(ClienteEntity clienteEntity, BindingResult result, RedirectAttributes attributes);
 
-    void consultarCep(ClienteDTO clienteDTO);
-
     String editarCliente(HttpSession session, Model model);
 
     String confirmarAtualizacao(ClienteDTO clienteDTO, BindingResult result, HttpSession session);
@@ -23,13 +21,11 @@ public interface ClienteService {
 
     String listarEnderecos(Model model, HttpSession session);
 
-    String apresentarLoja(Model model, HttpSession session);
-
-    String salvarEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result, RedirectAttributes attributes);
+    String salvarEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result, RedirectAttributes attributes, HttpSession session);
 
     String novoEndereco(Model model, HttpSession session);
 
     String desativarEndereco(Long id, Model model, HttpSession session);
 
-    void alterarEnderecoPrincipal(Long id);
+    String alterarEnderecoPrincipal(Long id, HttpSession session);
 }

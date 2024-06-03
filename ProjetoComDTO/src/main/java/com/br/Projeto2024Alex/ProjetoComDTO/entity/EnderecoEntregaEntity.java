@@ -1,6 +1,8 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -19,7 +21,7 @@ public class EnderecoEntregaEntity {
     private Long id;
 
     @NotNull(message = "O campo CEP não deve estar nulo")
-    @Size(min = 8, max = 8)
+    @Size(min = 8, max = 8, message = "O CEP deve ter no máximo e mínimo 8 números")
     @Column(name = "cep", nullable = false)
     private String cep;
 
@@ -27,7 +29,7 @@ public class EnderecoEntregaEntity {
     @Column(name = "logradouro", nullable = false)
     private String logradouro;
 
-    @NotNull
+    @NotNull(message = "O campo número não pode estar nulo")
     @Column(name = "numero", nullable = false)
     private Integer numero;
 
@@ -52,10 +54,10 @@ public class EnderecoEntregaEntity {
     private ClienteEntity cliente;
 
     @Column(name = "enderecoPrincipal")
-    private boolean enderecoPrincipal;
+    private Boolean enderecoPrincipal;
 
     @Column(name = "status")
-    private boolean status;
+    private Boolean status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_inclusao", nullable = false, updatable = false)

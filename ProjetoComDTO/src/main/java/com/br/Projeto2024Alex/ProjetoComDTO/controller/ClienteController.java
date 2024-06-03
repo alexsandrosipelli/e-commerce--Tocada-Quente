@@ -7,7 +7,6 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ClienteDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ClienteServiceImpl;
 import jakarta.servlet.http.HttpSession;
@@ -25,7 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author alexs
  */
 @Controller
-@RequestMapping("/cliente")
+@RequestMapping("/site/cliente")
 public class ClienteController {
     private final ClienteRepository clienteRepository;
     private final ClienteServiceImpl clienteServiceImpl;
@@ -44,11 +43,6 @@ public class ClienteController {
         return "login-cliente";
     }
 
-    @GetMapping("/loja")
-    public String lojaApresentada(Model model, HttpSession session){
-        return clienteServiceImpl.apresentarLoja(model, session);
-    }
-
     @GetMapping("/novo")
     public String adicionarCliente(Model model, HttpSession session){
         model.addAttribute("cliente", new ClienteEntity());
@@ -65,7 +59,7 @@ public class ClienteController {
     @PostMapping("/enderecos/salvar")
     public String salvarEndereco(@Valid @ModelAttribute("enderecos") EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result,
                                 RedirectAttributes attributes, HttpSession session){
-        return clienteServiceImpl.salvarEndereco(enderecoEntregaDTO, result, attributes);
+        return clienteServiceImpl.salvarEndereco(enderecoEntregaDTO, result, attributes, session);
     }
 
     @GetMapping("/editar")
@@ -90,7 +84,7 @@ public class ClienteController {
         if (cliente != null) {
             if (encoder.matches(senha, cliente.getSenha())) {
                     session.setAttribute(CLIENTE_LOGADO, cliente);
-                    return "redirect:/cliente/loja";
+                    return "redirect:/site/";
             } else {
                 model.addAttribute("error", "Senha incorreta. Por favor, tente novamente.");
                 return "login-cliente";
@@ -117,8 +111,7 @@ public class ClienteController {
     }
 
     @PostMapping("/enderecos/principal/{id}")
-    public String desativarUsuario(@PathVariable Long id, Model model, HttpSession session) {
-        clienteServiceImpl.alterarEnderecoPrincipal(id);
-        return "redirect:/usuario/listar";
+    public String enderecoPrincipal(@PathVariable Long id, Model model, HttpSession session) {
+        return clienteServiceImpl.alterarEnderecoPrincipal(id, session);
     }
 }

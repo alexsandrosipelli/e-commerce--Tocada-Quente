@@ -14,7 +14,7 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center">Editar Perfil do Cliente</h2>
-                    <form th:action="@{/cliente/atualizar}" method="post" th:object="${clienteEditar}" class="gow g-3">
+                    <form th:action="@{/site/cliente/atualizar}" method="post" th:object="${clienteEditar}" class="gow g-3">
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="nome">Nome</label>
@@ -41,26 +41,6 @@
                             <div class="form-group col-md-12">
                                 <label for="senha">Senha</label>
                                 <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
-                            </div>
-                        </div>
-                        <br>
-                        <h2 class="card-title text-center">Adicionar novo endereço</h2>
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <label for="cep">CEP</label>
-                                <input type="text" class="form-control" id="cep" name="cep" placeholder="Digite seu CEP" th:field="*{cep}" maxlength="8" >
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <label for="localidade">Cidade</label>
-                                <input type="text" class="form-control" id="localidade" name="localidade" placeholder="Digite sua cidade" th:field="*{localidade}" >
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <label for="uf">UF</label>
-                                <input type="text" class="form-control" id="uf" name="uf" placeholder="Digite seu estado" th:field="*{uf}" maxlength="2" >
                             </div>
                         </div>
                         <!-- Adicione os campos para endereços de faturamento e entrega aqui -->

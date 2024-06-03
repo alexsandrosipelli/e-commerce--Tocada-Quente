@@ -4,12 +4,15 @@
  */
 package com.br.Projeto2024Alex.ProjetoComDTO.service.impl;
 
-import com.br.Projeto2024Alex.ProjetoComDTO.dto.*;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.ClienteDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoViacepDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoEntregaEntity;
-import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.EnderecoFaturamentoEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoFaturamentoRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ProdutoRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.ClienteService;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,10 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -41,15 +42,17 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
     private final ProdutoRepository produtoRepository;
     private final EnderecoEntregaRepository enderecoEntregaRepository;
+    private final EnderecoFaturamentoRepository enderecoFaturamentoRepository;
     private final EnderecoServiceImpl enderecoServiceImpl;
 
     @Autowired
-    public ClienteServiceImpl(ModelMapper modelMapper, PasswordEncoder encoder, ClienteRepository repository, ProdutoRepository produtoRepository, EnderecoEntregaRepository enderecoEntregaRepository, EnderecoServiceImpl enderecoServiceImpl) {
+    public ClienteServiceImpl(ModelMapper modelMapper, PasswordEncoder encoder, ClienteRepository repository, ProdutoRepository produtoRepository, EnderecoEntregaRepository enderecoEntregaRepository, EnderecoFaturamentoRepository enderecoFaturamentoRepository, EnderecoServiceImpl enderecoServiceImpl) {
         this.modelMapper = modelMapper;
         this.encoder = encoder;
         this.clienteRepository = repository;
         this.produtoRepository = produtoRepository;
         this.enderecoEntregaRepository = enderecoEntregaRepository;
+        this.enderecoFaturamentoRepository = enderecoFaturamentoRepository;
         this.enderecoServiceImpl = enderecoServiceImpl;
     }
 
@@ -60,21 +63,55 @@ public class ClienteServiceImpl implements ClienteService {
         if (temErros){
             return "criar-cliente";
         }else{
-            preencherCamposCadastro(clienteDTO);
+            preencherNovoCliente(clienteDTO);
             ClienteEntity clienteSalvar = modelMapper.map(clienteDTO, ClienteEntity.class);
             clienteRepository.save(clienteSalvar);
-            return "redirect:/cliente/";
+            EnderecoEntregaEntity enderecoEntrega = preencherNovoEnderecoEntrega(clienteDTO);
+            EnderecoFaturamentoEntity enderecoFaturamento = preencherNovoEnderecoFaturamento(clienteDTO);
+            enderecoEntregaRepository.save(enderecoEntrega);
+            enderecoFaturamentoRepository.save(enderecoFaturamento);
+            return "redirect:/site/cliente/";
         }
     }
 
-    private void preencherCamposCadastro(ClienteDTO clienteDto) {
+    private EnderecoFaturamentoEntity preencherNovoEnderecoFaturamento(ClienteDTO clienteDTO) {
+        EnderecoEntregaDTO enderecoFaturamentoDto = consultarNovoEndereco(clienteDTO);
+
+        return modelMapper.map(enderecoFaturamentoDto, EnderecoFaturamentoEntity.class);
+    }
+
+    private EnderecoEntregaEntity preencherNovoEnderecoEntrega(ClienteDTO clienteDTO) {
+        EnderecoEntregaDTO enderecoEntregaDTO = consultarNovoEndereco(clienteDTO);
+
+        return modelMapper.map(enderecoEntregaDTO, EnderecoEntregaEntity.class);
+    }
+
+    private EnderecoEntregaDTO consultarNovoEndereco(ClienteDTO clienteDTO) {
+        ClienteEntity clienteSalvo = clienteRepository.findByEmail(clienteDTO.getEmail());
+        ClienteDTO clienteDTO1 = modelMapper.map(clienteSalvo, ClienteDTO.class);
+        EnderecoViacepDTO viacepDTO = new EnderecoViacepDTO();
+
+        viacepDTO.setCep(clienteSalvo.getCep());
+
+        EnderecoEntregaDTO endereco = enderecoServiceImpl.executaBuscaEnderecoEntrega(viacepDTO);
+
+        endereco.setCep(endereco.getCep().replace("-", ""));
+        endereco.setNumero(clienteDTO.getNumero());
+        endereco.setComplemento(clienteDTO.getComplemento());
+        endereco.setEnderecoPrincipal(false);
+        endereco.setStatus(true);
+        endereco.setCliente(clienteDTO1);
+        return endereco;
+    }
+
+    private void preencherNovoCliente(ClienteDTO clienteDto) {
         clienteDto.setDataNascimento(clienteDto.getDataNascimento().replace("-", ""));
         String senhaCriptografada = encoder.encode(clienteDto.getSenha());
         clienteDto.setSenha(senhaCriptografada);
-        consultarCep(clienteDto);
     }
 
     private boolean validacaoCamposCadastro(ClienteDTO clienteDTO, BindingResult result) {
+        String regexCep = "^[0-9]+$";
         if (clienteRepository.existsByEmailIgnoreCase(clienteDTO.getEmail())) {
             result.rejectValue("email", "email.exists", "O e-mail já está cadastrado. Por favor, escolha outro.");
         }
@@ -83,26 +120,15 @@ public class ClienteServiceImpl implements ClienteService {
             result.rejectValue("cpf", "email.cpf", "O cpf já está cadastrado. Por favor, escolha outro.");
         }
 
+        if (clienteDTO.getNumero() != null && clienteDTO.getNumero().toString().length() > 8){
+            result.rejectValue("numero", "numero.max", "O número do endereço deve ter no máximo 8 dígitos.");
+        }
+
+        if (clienteDTO.getCep() != null && !clienteDTO.getCep().matches(regexCep)){
+            result.rejectValue("cep", "cep.invalid", "O CEP deve conter apenas números.");
+        }
+
         return result.hasErrors();
-    }
-
-    @Override
-    public void consultarCep(ClienteDTO clienteDTO) {
-        EnderecoViacepDTO viacepDTO = new EnderecoViacepDTO();
-
-        viacepDTO.setCep(clienteDTO.getCep());
-
-        EnderecoEntregaDTO enderecoEntregaDTO = enderecoServiceImpl.executaBuscaEnderecoEntrega(viacepDTO);
-
-        EnderecoFaturamentoDTO enderecoFaturamentoDto = modelMapper.map(enderecoEntregaDTO, EnderecoFaturamentoDTO.class);
-
-        enderecoEntregaDTO.setCliente(clienteDTO);
-        enderecoFaturamentoDto.setCliente(clienteDTO);
-
-        clienteDTO.setLocalidade(enderecoEntregaDTO.getLocalidade());
-        clienteDTO.setUf(enderecoEntregaDTO.getUf());
-        clienteDTO.setEnderecoEntrega(List.of(enderecoEntregaDTO));
-        clienteDTO.setEnderecoFaturamento(List.of(enderecoFaturamentoDto));
     }
 
     @Override
@@ -118,7 +144,7 @@ public class ClienteServiceImpl implements ClienteService {
             model.addAttribute("clienteEditar", clienteDTO);
             return "editar-cliente";
         }
-        return "redirect:/cliente/";
+        return "redirect:/site/cliente/";
     }
 
     private String formatarDataNascimento(String dataNascimento) {
@@ -140,13 +166,13 @@ public class ClienteServiceImpl implements ClienteService {
                     ClienteEntity clienteEntity = clienteBase.get();
                     preencherCamposEditar(clienteEntity, clienteDTO);
                     clienteRepository.save(clienteEntity);
-                    return "redirect:/cliente/loja";
+                    return "redirect:/site/";
                 }
             }else{
                 throw new EntityNotFoundException("Cliente não encontrado");
             }
         }else{
-            return "redirect:/cliente/";
+            return "redirect:/site/cliente/";
         }
     }
 
@@ -156,44 +182,41 @@ public class ClienteServiceImpl implements ClienteService {
         // Invalidar a sessão (opcional, mas recomendado)
         session.invalidate();
 
-        return "redirect:/cliente/loja";
+        return "redirect:/site/";
     }
 
     @Override
     public String listarEnderecos(Model model, HttpSession session) {
         ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
         if (clienteLogado != null){
-            List<EnderecoEntregaEntity> enderecos = enderecoEntregaRepository.findByCliente(clienteLogado);
-            model.addAttribute("clienteEnderecos", enderecos);
-            return "listar-enderecos.html";
+            List<EnderecoEntregaEntity> enderecos = enderecoEntregaRepository.findByCliente_IdAndStatus(clienteLogado.getId(), true);
+            model.addAttribute("enderecos", enderecos);
+            return "listar-enderecos";
         }
-        return "redirect:/cliente/";
+        return "redirect:/site/cliente/";
     }
 
     @Override
-    public String apresentarLoja(Model model, HttpSession session) {
-        ClienteEntity cliente = (ClienteEntity) session.getAttribute("clienteLogado");
-        List<ProdutoEntity> produtos = produtoRepository.findAll();
-        List<ProdutoDTO> produtosDto = produtos.stream()
-                .map(produto -> modelMapper.map(produto, ProdutoDTO.class))
-                .collect(Collectors.toList());
-        model.addAttribute("produtos", produtosDto);
-        if (cliente != null) {
-            model.addAttribute("clienteLogado", cliente);
-        }
-        return "loja-apresentada";
-    }
-
-    @Override
-    public String salvarEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result, RedirectAttributes attributes) {
-        boolean temErros = validacaoCamposEndereco(enderecoEntregaDTO, result);
-        if (temErros){
-            return "criar-endereco";
+    public String salvarEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result, RedirectAttributes attributes,
+                                 HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            ClienteDTO clienteDTO = modelMapper.map(clienteLogado, ClienteDTO.class);
+            enderecoEntregaDTO.setCliente(clienteDTO);
+            boolean temErros = validacaoCamposEndereco(enderecoEntregaDTO, result);
+            if (temErros){
+                return "criar-endereco";
+            }else{
+                enderecoEntregaDTO = preencherCamposEndereco(enderecoEntregaDTO);
+                enderecoEntregaDTO.setCliente(clienteDTO);
+                EnderecoEntregaEntity enderecoSalvar = modelMapper.map(enderecoEntregaDTO, EnderecoEntregaEntity.class);
+                EnderecoFaturamentoEntity enderecoFaturamentoSalvar = modelMapper.map(enderecoEntregaDTO, EnderecoFaturamentoEntity.class);
+                enderecoEntregaRepository.save(enderecoSalvar);
+                enderecoFaturamentoRepository.save(enderecoFaturamentoSalvar);
+                return "redirect:/site/cliente/enderecos";
+            }
         }else{
-            preencherCamposEndereco(enderecoEntregaDTO);
-            EnderecoEntregaEntity enderecoSalvar = modelMapper.map(enderecoEntregaDTO, EnderecoEntregaEntity.class);
-            enderecoEntregaRepository.save(enderecoSalvar);
-            return "redirect:/cliente/enderecos";
+            return "redirect:/site/cliente/";
         }
     }
 
@@ -201,70 +224,87 @@ public class ClienteServiceImpl implements ClienteService {
     public String novoEndereco(Model model, HttpSession session) {
         ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
         if (clienteLogado != null) {
-            ClienteDTO clienteDTO = modelMapper.map(clienteLogado, ClienteDTO.class);
-            EnderecoEntregaDTO enderecoEntregaDTO = new EnderecoEntregaDTO();
-            enderecoEntregaDTO.setCliente(clienteDTO);
-            model.addAttribute("enderecos", enderecoEntregaDTO);
+            model.addAttribute("enderecos", new EnderecoEntregaEntity());
             return "criar-endereco";
         }
-        return "login-cliente";
+        return "redirect:/site/cliente/";
     }
 
     @Override
     public String desativarEndereco(Long id, Model model, HttpSession session) {
         Optional<EnderecoEntregaEntity> enderecos = enderecoEntregaRepository.findById(id);
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
 
-        if (enderecos.isPresent()){
-            EnderecoEntregaEntity endereco = enderecos.get();
-            enderecoEntregaRepository.delete(endereco);
-            return "redirect:/cliente/enderecos";
+        if (clienteLogado != null){
+            if (enderecos.isPresent()){
+                EnderecoEntregaEntity endereco = enderecos.get();
+                endereco.setStatus(false);
+                endereco.setCliente(clienteLogado);
+                enderecoEntregaRepository.save(endereco);
+                return "redirect:/site/cliente/enderecos";
+            }else{
+                throw new EntityNotFoundException("Endereço com o id "+id+" não encontrado na base de dados");
+            }
         }else{
-            throw new EntityNotFoundException("Endereço com o id "+id+" não encontrado na base de dados");
+            return "redirect:/site/cliente/";
         }
     }
 
     @Override
-    public void alterarEnderecoPrincipal(Long id) {
+    public String alterarEnderecoPrincipal(Long id, HttpSession session) {
         Optional<EnderecoEntregaEntity> enderecoOptional = enderecoEntregaRepository.findById(id);
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            if (enderecoOptional.isPresent()){
+                EnderecoEntregaEntity enderecoPrincipal = enderecoOptional.get();
+                enderecoPrincipal.setCliente(clienteLogado);
 
-        if (enderecoOptional.isPresent()){
-            EnderecoEntregaEntity enderecoPrincipal = enderecoOptional.get();
-
-            // Desativar todos os outros endereços principais para este cliente
-            List<EnderecoEntregaEntity> enderecosCliente = enderecoEntregaRepository
-                    .findNonPrimaryOrUnsetEnderecosByClienteId(enderecoPrincipal.getCliente().getId());
-
-            for (EnderecoEntregaEntity endereco : enderecosCliente) {
-                if (!endereco.getId().equals(id) && endereco.isEnderecoPrincipal()) {
-                    endereco.setEnderecoPrincipal(false);
-                    enderecoEntregaRepository.save(endereco);
+                if (Boolean.TRUE.equals(enderecoPrincipal.getEnderecoPrincipal())){
+                    enderecoPrincipal.setEnderecoPrincipal(false);
+                    enderecoEntregaRepository.save(enderecoPrincipal);
+                    return "redirect:/site/cliente/enderecos";
                 }
+                // Desativar todos os outros endereços principais para este cliente
+                List<EnderecoEntregaEntity> enderecosCliente = enderecoEntregaRepository
+                        .findSecondaryEnderecosByClienteId(enderecoPrincipal.getCliente().getId());
+
+                for (EnderecoEntregaEntity endereco : enderecosCliente) {
+                    if (!endereco.getId().equals(id) && Boolean.TRUE.equals(endereco.getEnderecoPrincipal())) {
+                        endereco.setEnderecoPrincipal(false);
+                        enderecoEntregaRepository.save(endereco);
+                    }
+                }
+
+                // Definir o endereço especificado como principal
+                enderecoPrincipal.setEnderecoPrincipal(true);
+                enderecoEntregaRepository.save(enderecoPrincipal);
+                return "redirect:/site/cliente/enderecos";
+            } else {
+                throw new EntityNotFoundException("Endereço com o id " + id + " não encontrado na base de dados");
             }
-
-            // Definir o endereço especificado como principal
-            enderecoPrincipal.setEnderecoPrincipal(true);
-            enderecoEntregaRepository.save(enderecoPrincipal);
-        } else {
-            throw new EntityNotFoundException("Endereço com o id " + id + " não encontrado na base de dados");
+        }else{
+            return "redirect:/site/cliente/";
         }
-
     }
 
-    private void preencherCamposEndereco(EnderecoEntregaDTO enderecoEntregaDTO) {
-        consultarCepCadastroEndereco(enderecoEntregaDTO);
+    private EnderecoEntregaDTO preencherCamposEndereco(EnderecoEntregaDTO enderecoEntregaDTO) {
+        enderecoEntregaDTO = consultarCepCadastroEndereco(enderecoEntregaDTO);
+        return enderecoEntregaDTO;
     }
 
-    private void consultarCepCadastroEndereco(EnderecoEntregaDTO enderecoEntregaDTO) {
+    private EnderecoEntregaDTO consultarCepCadastroEndereco(EnderecoEntregaDTO enderecoEntregaDTO) {
         EnderecoViacepDTO viacepDTO = new EnderecoViacepDTO();
 
         viacepDTO.setCep(enderecoEntregaDTO.getCep());
 
-        enderecoEntregaDTO = enderecoServiceImpl.executaBuscaEnderecoEntrega(viacepDTO);
+        EnderecoEntregaDTO endereco = enderecoServiceImpl.executaBuscaEnderecoEntrega(viacepDTO);
 
-        EnderecoFaturamentoDTO enderecoFaturamentoDto = modelMapper.map(enderecoEntregaDTO, EnderecoFaturamentoDTO.class);
-
-        enderecoEntregaDTO.setCliente(enderecoEntregaDTO.getCliente());
-        enderecoFaturamentoDto.setCliente(enderecoEntregaDTO.getCliente());
+        endereco.setCep(enderecoEntregaDTO.getCep());
+        endereco.setNumero(enderecoEntregaDTO.getNumero());
+        endereco.setComplemento(enderecoEntregaDTO.getComplemento());
+        endereco.setEnderecoPrincipal(false);
+        endereco.setStatus(true);
+        return endereco;
     }
 
     private boolean validacaoCamposEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result) {
@@ -281,14 +321,7 @@ public class ClienteServiceImpl implements ClienteService {
         clienteEntity.setGenero(clienteDTO.getGenero());
         if (!clienteDTO.getSenha().isEmpty())
             clienteEntity.setSenha(encoder.encode(clienteDTO.getSenha()));
-        if (!clienteDTO.getCep().isEmpty()){
-            consultarCep(clienteDTO);
-            clienteEntity.setCep(clienteDTO.getCep());
-            clienteEntity.setEnderecosEntrega(clienteDTO.toEntity().getEnderecosEntrega());
-            clienteEntity.setEnderecosFaturamento(clienteDTO.toEntity().getEnderecosFaturamento());
-        }else{
-            clienteEntity.setEnderecosEntrega(null);
-            clienteEntity.setEnderecosFaturamento(null);
-        }
+        clienteEntity.setNumero(777);
+        clienteEntity.setComplemento("Preenchimento padrão");
     }
 }

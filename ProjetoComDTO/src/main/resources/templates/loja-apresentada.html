@@ -96,17 +96,17 @@
     <div class="navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item" th:if="${clienteLogado == null}">
-                <a class="nav-link" th:href="@{/cliente/}">Faça login/Crie seu login</a>
+                <a class="nav-link" th:href="@{/site/cliente/}">Faça login/Crie seu login</a>
             </li>
             <li class="nav-item dropdown" th:if="${clienteLogado != null}">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bi bi-person-circle"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" th:href="@{/cliente/editar}">Editar Perfil</a>
-                    <a class="dropdown-item" th:href="@{/cliente/enderecos}">Editar Endereços</a>
+                    <a class="dropdown-item" th:href="@{/site/cliente/editar}">Editar Perfil</a>
+                    <a class="dropdown-item" th:href="@{/site/cliente/enderecos}">Editar Endereços</a>
                     <div class="dropdown-divider"></div>
-                    <form th:action="@{/cliente/sair}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                    <form th:action="@{/site/cliente/sair}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
                         <button type="submit" class="dropdown-item">Sair</button>
                     </form>
                 </div>

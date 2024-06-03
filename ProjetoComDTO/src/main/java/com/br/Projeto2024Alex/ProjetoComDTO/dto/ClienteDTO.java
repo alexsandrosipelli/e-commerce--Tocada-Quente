@@ -23,6 +23,8 @@ public class ClienteDTO {
     private String senha;
     private String cpf;
     private String cep;
+    private Integer numero;
+    private String complemento;
     private String localidade;
     private String uf;
     private List<EnderecoFaturamentoDTO> enderecoFaturamento;

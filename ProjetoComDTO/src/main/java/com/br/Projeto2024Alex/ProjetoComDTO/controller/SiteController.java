@@ -32,6 +32,10 @@ public class SiteController {
 
     @GetMapping("/")
     public String inicial(Model model, HttpSession session) {
+        ClienteEntity cliente = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (cliente != null) {
+            model.addAttribute("clienteLogado", cliente);
+        }
         List<ProdutoDTO> produtos = produtoServiceImpl.listarProdutos();
 
         // Para cada produto na lista de produtos, define o caminho da imagem principal
@@ -39,17 +43,11 @@ public class SiteController {
 
         model.addAttribute("produtos", produtos);
 
-        return "/loja-apresentada";
+        return "loja-apresentada";
     }
 
     @GetMapping("/{id}")
     public String detalheProduto(@PathVariable Long id, Model model, HttpSession session) {
-        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
-
-        if (clienteLogado == null) {
-            return "redirect:/cliente/";
-        }
-
         ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
         int indexImagemPrincipal = produtoDTO.getImagemPrincipal();
         ImagemProdutoDTO imagemPrincipal = produtoDTO.getImagens().get(indexImagemPrincipal);
@@ -57,7 +55,7 @@ public class SiteController {
 
         model.addAttribute(produtoDTO);
 
-        return "Tela-apresentar-detalhe";
+        return "produto-detalhe";
     }
 
     @GetMapping("/desenvolvendo")

@@ -13,15 +13,15 @@ import java.util.List;
 @Repository
 public interface EnderecoEntregaRepository extends JpaRepository<EnderecoEntregaEntity, Long> {
 
-    List<EnderecoEntregaEntity> findByCliente(ClienteEntity cliente);
-
     boolean existsByCepAndCliente(String cep, ClienteEntity cliente);
 
-    @Query("select e from EnderecoEntregaEntity e where e.cliente.id = ?1 and (e.enderecoPrincipal = false or e.enderecoPrincipal is null)")
-    List<EnderecoEntregaEntity> findNonPrimaryOrUnsetEnderecosByClienteId(Long clienteId);
+    @Query("select e from EnderecoEntregaEntity e where e.cliente.id = ?1 and (e.enderecoPrincipal = true)")
+    List<EnderecoEntregaEntity> findSecondaryEnderecosByClienteId(Long clienteId);
 
     @Transactional
     @Modifying
     @Query("delete from EnderecoEntregaEntity e where e.complemento like 'Endereco Teste%'")
     void deleteByComplementoStartingWithEntregaTeste();
+
+    List<EnderecoEntregaEntity> findByCliente_IdAndStatus(Long id, boolean status);
 }

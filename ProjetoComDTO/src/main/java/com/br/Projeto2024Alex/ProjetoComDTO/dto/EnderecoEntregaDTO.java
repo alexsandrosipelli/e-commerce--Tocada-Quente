@@ -12,9 +12,9 @@ public class EnderecoEntregaDTO {
 
     }
 
-    public EnderecoEntregaDTO(String cep, String logradouro, String numero, String complemento, String bairro,
-                              String localidade, ClienteDTO cliente, String uf, boolean enderecoPrincipal,
-                              boolean status) {
+    public EnderecoEntregaDTO(String cep, String logradouro, Integer numero, String complemento, String bairro,
+                              String localidade, ClienteDTO cliente, String uf, Boolean enderecoPrincipal,
+                              Boolean status) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.numero = numero;
@@ -32,12 +32,12 @@ public class EnderecoEntregaDTO {
     @NotBlank(message = "O campo CEP não deve estar vazio")
     private String cep;
     private String logradouro;
-    private String numero;
+    private Integer numero;
     private String complemento;
     private String bairro;
     private String localidade;
     private ClienteDTO cliente;
     private String uf;
-    private boolean enderecoPrincipal;
-    private boolean status;
+    private Boolean enderecoPrincipal;
+    private Boolean status;
 }

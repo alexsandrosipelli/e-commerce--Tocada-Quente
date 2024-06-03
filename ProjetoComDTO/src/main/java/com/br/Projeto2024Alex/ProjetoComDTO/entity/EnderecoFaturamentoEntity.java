@@ -1,6 +1,8 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -19,7 +21,6 @@ public class EnderecoFaturamentoEntity {
     private Long id;
 
     @NotNull
-    @Size(min = 8, max = 8)
     @Column(name = "cep", nullable = false)
     private String cep;
 
@@ -51,10 +52,10 @@ public class EnderecoFaturamentoEntity {
     private ClienteEntity cliente;
 
     @Column(name = "enderecoPrincipal")
-    private boolean enderecoPrincipal;
+    private Boolean enderecoPrincipal;
 
     @Column(name = "status")
-    private boolean status;
+    private Boolean status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_inclusao", nullable = false, updatable = false)
