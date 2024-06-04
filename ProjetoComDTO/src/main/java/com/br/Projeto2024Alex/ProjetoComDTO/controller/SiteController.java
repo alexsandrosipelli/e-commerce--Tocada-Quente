@@ -58,9 +58,9 @@ public class SiteController {
         return "produto-detalhe";
     }
 
-    @GetMapping("/desenvolvendo")
-    public String carrinho(){
-        // Tela ainda em desenvolvimento
-        return "telaAviso";
-    }
+//    @GetMapping("/desenvolvendo")
+//    public String carrinho(){
+//        // Tela ainda em desenvolvimento
+//        return "telaAviso";
+//    }
 }

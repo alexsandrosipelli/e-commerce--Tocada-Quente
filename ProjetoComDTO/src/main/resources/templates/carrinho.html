@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sua Loja</title>
+        <!-- Link para o CSS do Bootstrap -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+        <!-- Link para o CSS personalizado -->
+        <link href="/css/custom.css" rel="stylesheet">
+        <style>
+            /* Estilos personalizados */
+            body {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            .navbar {
+                background-color: #333333;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .navbar-brand {
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            .navbar-nav .nav-link {
+                color: #ffffff;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #007bff;
+            }
+
+            .card {
+
+                border: none;
+                transition: transform 0.3s;
+                background-color: #333333;
+                color: #ffffff;
+                margin-bottom: 20px;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+            .card-img-top {
+                object-fit: cover;
+                height: 200px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                color: #ffffff;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-text {
+                color: #cccccc;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+            /* Estilos adicionais */
+            .navbar-nav.ml-auto {
+                display: flex;
+                align-items: center;
+            }
+
+            .nav-link {
+                margin-right: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Barra de navegação -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed top">
+            <a class="navbar-brand" href="/site/">
+                <img src="/imgLogo/logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="Logo do site" >
+                TocadaQuente
+            </a>
+            <div class="navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/cliente/}">Faça login/Crie seu login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/carrinho/}">
+                            <i class="bi bi-cart-fill"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container mb-4 navbar-light bg-light">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col"> </th>
+                                    <th scope="col">Produto</th>
+                                    <th scope="col">Estoque</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Valor Unitário</th>
+                                    <th scope="col">Valor Total</th>
+                                    <th> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${listaItens}">
+                                    <td><img src="https://dummyimage.com/50x50/55595c/fff" /> </td>
+                                    <td th:text = "${item.produtoEntity.nome}"></td>
+                                    <td>Em estoque</td>
+                                    <td><span  th:text = "${item.quantidade}"></span>
+
+                                        <a href="#" class="btn btn-sm btn-success" 
+                                           th:href="@{/carrinhoDeCompras/alterarQuantidade/{id}/{acao}(id=${item.produtoEntity.id},acao=${1})}">
+                                            <i class="fa fa-plus"></i></a>
+
+                                        &nbsp;
+
+                                        <a href="#" class="btn btn-sm btn-success" 
+                                           th:href="@{/carrinhoDeCompras/alterarQuantidade/{id}/{acao}(id=${item.produtoEntity.id},acao=${0})}">
+                                            <i class="fa fa-minus"></i></a>
+                                    </td>
+
+                                    <td th:text = "${item.valorUnitario}"></td>
+                                    
+                                    <td th:text = "${item.valorTotal}"></td>     
+
+                                    <td ><a href="#" class="btn btn-sm btn-danger" 
+                                            th:href="@{/carrinhoDeCompras/removerProduto/{id}(id=${item.produtoEntity.id})}">
+                                            <i class="fa fa-trash"></i></a></td>
+                                </tr>                                
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Sub-Total</td>
+                                    <td><span th:text="${compra.valorTotal}"></span></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Frete</td>
+                                    <td >GRÁTIS</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>Total</strong></td>
+                                    <td><span th:text="${compra.valorTotal}"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-sm-12  col-md-6">
+                            <a th:href="@{/site/}" class="btn btn-lg btn-block btn-primary text-uppercase">Continue Comprando</a>
+                        </div>
+                        <div class="col-sm-12 col-md-6 text-right">
+                            <button class="btn btn-lg btn-block btn-success text-uppercase">Finalizar Compra</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link para o JavaScript do Bootstrap -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>
