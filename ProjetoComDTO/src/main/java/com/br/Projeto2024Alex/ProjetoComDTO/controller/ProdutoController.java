@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -36,62 +35,6 @@ public class ProdutoController {
     @Autowired
     private ProdutoServiceImpl produtoServiceImpl;
     private static final String UPLOAD_DIR = "src/main/resources/static/imagem";
-
-    /* Acessar a página de edição de produto */
-    @GetMapping("/produtos/{id}/editar")
-    public String mostrarFormularioEdicaoProduto(@PathVariable Long id, Model model, HttpSession session) {
-        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/";
-        }
-        ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
-        String tipoUsuario = usuarioLogado.getGrupo();
-        String caminhoImagemPrincipal = produtoDTO.getCaminhoImagemPrincipal();
-        // Definir o caminho da imagem principal no produtoDTO
-        produtoDTO.setImagemPrincipalString(caminhoImagemPrincipal);
-
-        List<ImagemProdutoDTO> imagens = produtoDTO.getImagens();
-
-        int indiceImagemPrincipal = -1;
-        indiceImagemPrincipal = produtoDTO.getIndiceImagemPrincipal();
-
-        produtoDTO.setImagemPrincipal(indiceImagemPrincipal);
-
-        /*Se o usuario for estoquista apresentará a tela de ediçao do estoquista*/
-        if ("ESTOQUISTA".equals(tipoUsuario)) {
-
-            model.addAttribute("produtoDTO", produtoDTO);
-
-            return "edicao-estoquista";
-        } else {
-
-            model.addAttribute("tipoUsuario", tipoUsuario);
-            // Carregar as imagens existentes do produto e adicionar ao modelo
-            model.addAttribute("produtoDTO", produtoDTO);
-
-            return "editar-Produto"; // Retornar a página padrão de edição
-        }
-    }
-
-    @PostMapping("/produtos/editarEstoquista")
-    public String editarProdutoEstoquista(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO) {
-
-        produtoServiceImpl.editarProdutoEstoquista(produtoDTO);
-        return "redirect:/produtos";
-    }
-
-    /*esse que vai mudar o produto*/
-    @PostMapping("/produtos/editar")
-    public String editarProduto(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO,
-            BindingResult result,
-            @RequestParam("imagens") List<MultipartFile> imagens,
-            RedirectAttributes attributes) throws IOException {
-        produtoDTO.getImagemPrincipal();
-        produtoServiceImpl.editarProduto(produtoDTO, imagens);
-
-        attributes.addFlashAttribute("mensagem", "Produto editado com sucesso!");
-        return "redirect:/produtos";
-    }
 
     /*listar os produtos*/
     @GetMapping("/produtos")
@@ -170,5 +113,61 @@ public class ProdutoController {
         } else {
             return "redirect:/pagina-de-erro";
         }
+    }
+
+    /* Acessar a página de edição de produto */
+    @GetMapping("/produtos/{id}/editar")
+    public String mostrarFormularioEdicaoProduto(@PathVariable Long id, Model model, HttpSession session) {
+        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
+        ProdutoDTO produtoDTO = produtoServiceImpl.buscarProdutoPorId(id);
+        String tipoUsuario = usuarioLogado.getGrupo();
+        String caminhoImagemPrincipal = produtoDTO.getCaminhoImagemPrincipal();
+        // Definir o caminho da imagem principal no produtoDTO
+        produtoDTO.setImagemPrincipalString(caminhoImagemPrincipal);
+
+        List<ImagemProdutoDTO> imagens = produtoDTO.getImagens();
+
+        int indiceImagemPrincipal = -1;
+        indiceImagemPrincipal = produtoDTO.getIndiceImagemPrincipal();
+
+        produtoDTO.setImagemPrincipal(indiceImagemPrincipal);
+
+        /*Se o usuario for estoquista apresentará a tela de ediçao do estoquista*/
+        if ("ESTOQUISTA".equals(tipoUsuario)) {
+
+            model.addAttribute("produtoDTO", produtoDTO);
+
+            return "edicao-estoquista";
+        } else {
+
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            // Carregar as imagens existentes do produto e adicionar ao modelo
+            model.addAttribute("produtoDTO", produtoDTO);
+
+            return "editar-Produto"; // Retornar a página padrão de edição
+        }
+    }
+
+    @PostMapping("/produtos/editarEstoquista")
+    public String editarProdutoEstoquista(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO) {
+
+        produtoServiceImpl.editarProdutoEstoquista(produtoDTO);
+        return "redirect:/produtos";
+    }
+
+    /*esse que vai mudar o produto*/
+    @PostMapping("/produtos/editar")
+    public String editarProduto(@Valid @ModelAttribute("produtoDTO") ProdutoDTO produtoDTO,
+            BindingResult result,
+            @RequestParam("imagens") List<MultipartFile> imagens,
+            RedirectAttributes attributes) throws IOException {
+        produtoDTO.getImagemPrincipal();
+        produtoServiceImpl.editarProduto(produtoDTO, imagens);
+
+        attributes.addFlashAttribute("mensagem", "Produto editado com sucesso!");
+        return "redirect:/produtos";
     }
 }
