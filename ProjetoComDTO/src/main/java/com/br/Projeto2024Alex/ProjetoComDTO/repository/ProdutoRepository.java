@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  *
  * @author alexs
@@ -26,4 +28,6 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Long> {
     @Modifying
     @Query("delete from ProdutoEntity u where u.nome like 'Produto teste%'")
     void deleteByNomeStartingWithProdutoTeste();
+
+    List<ProdutoEntity> findByNomeStartingWith(String produtoTeste);
 }

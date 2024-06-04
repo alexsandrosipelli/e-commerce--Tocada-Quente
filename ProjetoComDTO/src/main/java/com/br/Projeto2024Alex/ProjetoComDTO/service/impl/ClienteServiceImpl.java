@@ -128,6 +128,14 @@ public class ClienteServiceImpl implements ClienteService {
             result.rejectValue("cep", "cep.invalid", "O CEP deve conter apenas números.");
         }
 
+        if (clienteDTO.getNumero() == null){
+            result.rejectValue("numero", "numero.null", "O campo número não pode ser nulo.");
+        }
+
+        if (clienteDTO.getComplemento().isBlank() || clienteDTO.getComplemento().isEmpty()){
+            result.rejectValue("complemento", "complemento.empty", "O campo complemento não pode estar em branco.");
+        }
+
         return result.hasErrors();
     }
 
@@ -310,6 +318,14 @@ public class ClienteServiceImpl implements ClienteService {
     private boolean validacaoCamposEndereco(EnderecoEntregaDTO enderecoEntregaDTO, BindingResult result) {
         if (enderecoEntregaRepository.existsByCepAndCliente(enderecoEntregaDTO.getCep(), enderecoEntregaDTO.getCliente().toEntity())) {
             result.rejectValue("cep", "cep.exists", "CEP já cadastrado para o cliente logado");
+        }
+
+        if (enderecoEntregaDTO.getNumero() == null){
+            result.rejectValue("numero", "numero.null", "O campo número não pode ser nulo.");
+        }
+
+        if (enderecoEntregaDTO.getComplemento().isBlank() || enderecoEntregaDTO.getComplemento().isEmpty()){
+            result.rejectValue("complemento", "complemento.empty", "O campo complemento não pode estar em branco.");
         }
 
         return result.hasErrors();

@@ -37,8 +37,19 @@ public class ClienteDTO {
     }
 
     public ClienteEntity toEntity() {
-        ClienteEntity usuarioEntity = new ClienteEntity();
-        BeanUtils.copyProperties(this, usuarioEntity);
-        return usuarioEntity;
+        ClienteEntity clienteEntity = new ClienteEntity();
+        clienteEntity.setNome(this.getNome());
+        clienteEntity.setDataNascimento(this.getDataNascimento());
+        clienteEntity.setGenero(this.getGenero());
+        clienteEntity.setEmail(this.getEmail());
+        clienteEntity.setSenha(this.getSenha());
+        clienteEntity.setCpf(this.getCpf());
+        clienteEntity.setCep(this.getCep());
+        clienteEntity.setLocalidade(this.getLocalidade());
+        clienteEntity.setUf(this.getUf());
+        clienteEntity.setNumero(this.getNumero());
+        clienteEntity.setComplemento(this.getComplemento());
+        return clienteEntity;
     }
+
 }

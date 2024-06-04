@@ -19,4 +19,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
     @Modifying
     @Query("delete from UsuarioEntity u where u.email like 'usuarioteste%'")
     void deleteByEmailStartingWithUsuarioTeste();
+
+    List<UsuarioEntity> findByEmailStartingWith(String usuarioteste);
 }

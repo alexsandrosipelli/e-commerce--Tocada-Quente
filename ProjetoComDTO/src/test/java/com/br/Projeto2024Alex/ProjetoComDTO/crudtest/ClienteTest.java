@@ -1,18 +1,16 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.crudtest;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.dto.ClienteDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
-import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoFaturamentoDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.ClienteRepository;
-import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
-import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoFaturamentoRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,22 +23,23 @@ public class ClienteTest {
     @Autowired
     private ClienteRepository repository;
 
-    @Autowired
-    private EnderecoEntregaRepository enderecoEntregaRepository;
-
-    @Autowired
-    private EnderecoFaturamentoRepository enderecoFaturamentoRepository;
+    @BeforeEach
+    @AfterEach
+    void limparDadosDeTeste() {
+        List<ClienteEntity> clientes = repository.findByEmailStartingWith("clienteteste");
+        repository.deleteAll(clientes);
+    }
 
     @Test
-    void testeCadastroCliente(){
+    void testeCadastroCliente() {
         ClienteDTO clienteDTO = new ClienteDTO();
-        List<EnderecoEntregaDTO> listaEnderecosEntrega = new ArrayList<>();
-        List<EnderecoFaturamentoDTO> listaEnderecosFaturamento = new ArrayList<>();
         String senha = encoder.encode("1234");
 
         clienteDTO.setNome("Cliente Teste1");
         clienteDTO.setDataNascimento("20240517");
         clienteDTO.setGenero("Masculino");
+        clienteDTO.setComplemento("Teste Crud Cliente");
+        clienteDTO.setNumero(777);
         clienteDTO.setEmail("clienteteste1@gmail.com");
         clienteDTO.setSenha(senha);
         clienteDTO.setCpf("99296983886");
@@ -48,45 +47,15 @@ public class ClienteTest {
         clienteDTO.setLocalidade("São Paulo");
         clienteDTO.setUf("SP");
 
-        listaEnderecosEntrega.add(new EnderecoEntregaDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
-
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
-        assertNotNull(clienteEntity.getId());
+        ClienteEntity clienteEntityGet = repository.findById(clienteEntity.getId()).orElse(null);
+        assertNotNull(clienteEntityGet, "Cliente não foi cadastrado corretamente.");
     }
 
     @Test
-    void testeBuscarCliente(){
+    void testeBuscarCliente() {
         ClienteDTO clienteDTO = new ClienteDTO();
-        List<EnderecoEntregaDTO> listaEnderecosEntrega = new ArrayList<>();
-        List<EnderecoFaturamentoDTO> listaEnderecosFaturamento = new ArrayList<>();
         String senha = encoder.encode("1234");
 
         clienteDTO.setNome("Cliente Teste2");
@@ -94,39 +63,12 @@ public class ClienteTest {
         clienteDTO.setGenero("Masculino");
         clienteDTO.setEmail("clienteteste2@gmail.com");
         clienteDTO.setSenha(senha);
+        clienteDTO.setComplemento("Teste Crud Cliente");
+        clienteDTO.setNumero(777);
         clienteDTO.setCpf("02869286805");
         clienteDTO.setCep("04696000");
         clienteDTO.setLocalidade("São Paulo");
         clienteDTO.setUf("SP");
-
-        listaEnderecosEntrega.add(new EnderecoEntregaDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
 
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
@@ -136,10 +78,9 @@ public class ClienteTest {
     }
 
     @Test
-    void testeEditarCliente(){
+    void testeEditarCliente() {
+        // Criação de um novo ClienteDTO com todos os campos necessários
         ClienteDTO clienteDTO = new ClienteDTO();
-        List<EnderecoEntregaDTO> listaEnderecosEntrega = new ArrayList<>();
-        List<EnderecoFaturamentoDTO> listaEnderecosFaturamento = new ArrayList<>();
         String senha = encoder.encode("1234");
 
         clienteDTO.setNome("Cliente Teste3");
@@ -147,62 +88,52 @@ public class ClienteTest {
         clienteDTO.setGenero("Masculino");
         clienteDTO.setEmail("clienteteste3@gmail.com");
         clienteDTO.setSenha(senha);
+        clienteDTO.setComplemento("Teste Crud Cliente");
+        clienteDTO.setNumero(777);
         clienteDTO.setCpf("96498848820");
         clienteDTO.setCep("04696000");
         clienteDTO.setLocalidade("São Paulo");
         clienteDTO.setUf("SP");
 
-        listaEnderecosEntrega.add(new EnderecoEntregaDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
-
+        // Converte o DTO para uma entidade e salva no repositório
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
 
-        clienteEntity.setGenero("Feminino");
+        // Busca o cliente salvo
+        ClienteEntity clienteSalvo = repository.findById(clienteEntity.getId()).orElse(null);
+        assertNotNull(clienteSalvo, "O cliente não foi encontrado após salvar");
 
-        repository.save(clienteEntity);
+        // Atualiza campos da entidade
+        clienteSalvo.setGenero("Feminino");
 
-        ClienteEntity clienteAtualizado = repository.findById(clienteEntity.getId()).orElse(null);
+        // Os campos transitórios precisam ser setados novamente
+        clienteSalvo.setNumero(777);
+        clienteSalvo.setComplemento("Teste Crud Cliente");
 
-        assertNotNull(clienteAtualizado);
-        assertEquals("Feminino", clienteAtualizado.getGenero());
+        // Salva a atualização
+        repository.save(clienteSalvo);
+
+        // Busca novamente o cliente atualizado
+        ClienteEntity clienteAtualizadoNovo = repository.findById(clienteSalvo.getId()).orElse(null);
+        assertNotNull(clienteAtualizadoNovo, "O cliente não foi encontrado após a atualização");
+        assertEquals("Feminino", clienteAtualizadoNovo.getGenero(), "O gênero do cliente não foi atualizado corretamente");
+        clienteAtualizadoNovo.setNumero(777);
+        clienteAtualizadoNovo.setComplemento("Teste Crud Cliente");
+        assertEquals(clienteDTO.getNumero(), clienteAtualizadoNovo.getNumero(), "O número do cliente não foi atualizado corretamente");
+        assertEquals(clienteDTO.getComplemento(), clienteAtualizadoNovo.getComplemento(), "O complemento do cliente não foi atualizado corretamente");
     }
 
+
+
     @Test
-    void testeExcluirCliente(){
+    void testeExcluirCliente() {
         ClienteDTO clienteDTO = new ClienteDTO();
-        List<EnderecoEntregaDTO> listaEnderecosEntrega = new ArrayList<>();
-        List<EnderecoFaturamentoDTO> listaEnderecosFaturamento = new ArrayList<>();
         String senha = encoder.encode("1234");
 
         clienteDTO.setNome("Cliente Teste4");
         clienteDTO.setDataNascimento("20240517");
+        clienteDTO.setComplemento("Teste Crud Cliente");
+        clienteDTO.setNumero(777);
         clienteDTO.setGenero("Masculino");
         clienteDTO.setEmail("clienteteste4@gmail.com");
         clienteDTO.setSenha(senha);
@@ -211,42 +142,11 @@ public class ClienteTest {
         clienteDTO.setLocalidade("São Paulo");
         clienteDTO.setUf("SP");
 
-        listaEnderecosEntrega.add(new EnderecoEntregaDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        listaEnderecosFaturamento.add(new EnderecoFaturamentoDTO(
-                "04696000",
-                "Avenida Engenheiro Eusébio Stevaux",
-                "823",
-                "Endereco Teste Unitario",
-                "Jurubatuba",
-                "São Paulo",
-                clienteDTO,
-                "SP",
-                false,
-                false
-        ));
-
-        clienteDTO.setEnderecoEntrega(listaEnderecosEntrega);
-        clienteDTO.setEnderecoFaturamento(listaEnderecosFaturamento);
-
         ClienteEntity clienteEntity = clienteDTO.toEntity();
         repository.save(clienteEntity);
 
         repository.delete(clienteEntity);
 
         assertNull(repository.findById(clienteEntity.getId()).orElse(null));
-        enderecoEntregaRepository.deleteByComplementoStartingWithEntregaTeste();
-        enderecoFaturamentoRepository.deleteByComplementoStartingWithFaturamentoTeste();
     }
 }

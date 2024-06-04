@@ -63,12 +63,9 @@ public class ClienteEntity {
     @Column(name = "cep", nullable = false)
     private String cep;
 
-    @NotNull(message = "O campo Numero não deve estar nulo")
     @Transient
     private Integer numero;
 
-    @NotNull(message = "O campo Complemento não deve estar nulo")
-    @NotBlank(message = "O campo Complemento não deve estar nulo")
     @Transient
     private String complemento;
 
