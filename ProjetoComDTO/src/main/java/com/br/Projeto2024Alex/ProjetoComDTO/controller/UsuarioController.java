@@ -30,7 +30,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/listar")
-    public String listarUsuarios(Model model) {
+    public String listarUsuarios(Model model, HttpSession session) {
+        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
         List<UsuarioDTO> usuarios = usuarioServiceImpl.listarUsuarios();
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
@@ -65,9 +69,9 @@ public class UsuarioController {
         String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
         usuarioDTO.setSenha(senhaCriptografada);
         usuarioDTO.setStatus(true);
-        
+
         usuarioServiceImpl.salvarUsuario(usuarioDTO);
-        
+
         attributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
         return "redirect:/usuario/novo";
     }
@@ -75,7 +79,9 @@ public class UsuarioController {
     @GetMapping("/editar/{id}")
     public String editarUsuario(@PathVariable Long id, HttpSession session, Model model) {
         UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
-
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
         // Verifica se o usuário está tentando editar sua própria conta
         UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
         if (usuarioLogado.getId().equals(id)) {
