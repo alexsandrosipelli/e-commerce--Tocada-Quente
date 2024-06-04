@@ -1,6 +1,8 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -10,16 +12,16 @@ import java.util.Date;
 
 @Entity
 @Table(name = "endereco_entrega")
-@Data // Anotação para gerar automaticamente getters, setters, toString, equals e hashCode
-@EqualsAndHashCode(of = "id") // Gera automaticamente equals e hashCode usando apenas o campo "id"
+@Data
+@EqualsAndHashCode(of = "id")
 public class EnderecoEntregaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(min = 8, max = 8)
+    @NotNull(message = "O campo CEP não deve estar nulo")
+    @Size(min = 8, max = 8, message = "O CEP deve ter no máximo e mínimo 8 números")
     @Column(name = "cep", nullable = false)
     private String cep;
 
@@ -27,33 +29,41 @@ public class EnderecoEntregaEntity {
     @Column(name = "logradouro", nullable = false)
     private String logradouro;
 
-    @NotNull
+    @NotNull(message = "O campo número não pode estar nulo")
     @Column(name = "numero", nullable = false)
     private Integer numero;
 
     @Column(name = "complemento")
     private String complemento;
 
+    @NotNull
     @Column(name = "bairro", nullable = false)
     private String bairro;
 
+    @NotNull
     @Column(name = "cidade", nullable = false)
-    private String cidade;
+    private String localidade;
 
+    @NotNull(message = "O campo UF não deve estar nulo")
     @Size(min = 2, max = 2)
     @Column(name = "uf", nullable = false)
     private String uf;
 
-    @ManyToOne(fetch = FetchType.LAZY) //define que os endereços de um cliente serão carregados apenas quando explicitamente solicitados, o que pode melhorar o desempenho em algumas situações.
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteEntity cliente;
 
-    @Temporal(TemporalType.TIMESTAMP) //Indica que o dado é do tipo de data e hora do banco de dados
-    @Column(name = "data_inclusao", nullable = false, updatable = false) //Esse campo não vai ser atualizado
+    @Column(name = "enderecoPrincipal")
+    private Boolean enderecoPrincipal;
+
+    @Column(name = "status")
+    private Boolean status;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_inclusao", nullable = false, updatable = false)
     private Date dataInclusao = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "data_atualizacao", nullable = false) //Esse campo é sempre atualizado quando o dado for alterado
+    @Column(name = "data_atualizacao", nullable = false)
     private Date dataAtualizacao = new Date();
-
 }

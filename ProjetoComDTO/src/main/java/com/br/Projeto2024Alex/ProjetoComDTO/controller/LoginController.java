@@ -2,6 +2,7 @@ package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.UsuarioEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.repository.UsuarioRepository;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.LoginServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,36 +31,7 @@ public class LoginController {
 
     @PostMapping("/paginaInicial")
     public String login(@RequestParam String email, @RequestParam String senha, Model model, HttpSession session) {
-        /*email é pesquisado no banco de dados*/
-        UsuarioEntity usuario = usuarioRepository.findByEmail(email);
-        /*se nao for nulo*/
-        if (usuario != null) {
-            /*comparando senhas*/
-            if (encoder.matches(senha, usuario.getSenha())) {
-                /*se o usuario for ativo*/
-                if (usuario.isStatus()) {
-                    /*se o usuario for adm*/
-                    if (usuario.getGrupo().equals("ADMINISTRADOR")) {
-                        /**/
-                        model.addAttribute("tipoUsuario", "ADMINISTRADOR");
-                    } /*se o usuario for estoquista*/ else if (usuario.getGrupo().equals("ESTOQUISTA")) {
-                        model.addAttribute("tipoUsuario", "ESTOQUISTA");
-                    }
-                    session.setAttribute("usuarioLogado", usuario);
-                    return "pagina-principal";
-                    /*usuario inativo*/
-                } else {
-                    model.addAttribute("error", "Sua conta está inativa. Entre em contato com um administrador.");
-                }
-                /*se a senha for incorreta*/
-            } else {
-                model.addAttribute("error", "Senha incorreta. Por favor, tente novamente.");
-            }
-            /*se o email for nulo*/
-        } else {
-            model.addAttribute("error", "Usuário não encontrado. Por favor, verifique seu email.");
-        }
-        return "login";
+        return LoginServiceImpl.getInstance().efetuarLogin(email, senha, model, session, usuarioRepository, encoder);
     }
 
 }

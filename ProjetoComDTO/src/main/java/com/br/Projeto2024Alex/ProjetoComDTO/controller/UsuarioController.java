@@ -77,8 +77,8 @@ public class UsuarioController {
         UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
 
         // Verifica se o usuário está tentando editar sua própria conta
+        UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
         if (usuarioLogado.getId().equals(id)) {
-            UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
 
             if (usuario != null) {
                 model.addAttribute("senha", usuario.getSenha());
@@ -90,7 +90,6 @@ public class UsuarioController {
             }
         } else {
             // Se não for o próprio usuário tentando se alterar, permite a edição normal
-            UsuarioDTO usuario = usuarioServiceImpl.buscarUsuarioPorId(id);
 
             if (usuario != null) {
                 model.addAttribute("senha", usuario.getSenha());

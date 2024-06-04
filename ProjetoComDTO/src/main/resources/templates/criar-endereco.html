@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Cadastro de Endereço</h2>
+                    <form th:action="@{/site/cliente/enderecos/salvar}" method="post" th:object="${enderecos}" class="gow g-3">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="cep">CEP</label>
+                                <input type="text" class="form-control" th:errorclass="is-invalid" id="cep" name="cep" placeholder="Digite seu CEP" th:field="*{cep}" maxlength="8" >
+                                <div class="invalid-feedback" th:errors="*{cep}"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="complemento">Complemento</label>
+                                <input type="text" class="form-control" th:errorclass="is-invalid" id="complemento" name="complemento" placeholder="Digite o complemento do endereço" th:field="*{complemento}">
+                                <div class="invalid-feedback" th:errors="*{complemento}"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="numero">Número</label>
+                                <input type="text" class="form-control" th:errorclass="is-invalid" id="numero" name="numero" placeholder="Digite seu número" th:field="*{numero}" oninput="this.value = this.value.slice(0, 8)">
+                                <div class="invalid-feedback" th:errors="*{numero}"></div>
+                            </div>
+                        </div>
+                        <!-- Adicione os campos para endereços de faturamento e entrega aqui -->
+                        <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Limitar a entrada para 8 caracteres do número
+    const numeroInput = document.getElementById('numero');
+    numeroInput.addEventListener('input', () => {
+        numeroInput.value = numeroInput.value.slice(0, 8);
+    });
+</script>
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

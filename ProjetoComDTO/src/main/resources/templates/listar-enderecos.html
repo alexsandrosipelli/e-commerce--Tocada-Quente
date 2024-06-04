@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de Usuários</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mt-5 mb-4">Listagem de Endereços</h2>
+    <div class="alert alert-success alert-dismissible fade show" th:if="${mensagem}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span th:text="${mensagem}"></span>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show" th:if="${erros}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span th:text="${erros}"></span>
+    </div>
+
+    <a class="btn btn-secondary mb-3" th:href="@{/site/}">Voltar ao Menu da Loja</a>
+
+    <!-- Formulário de pesquisa -->
+    <a type="button" class="btn btn-primary mb-3" th:href="@{/site/cliente/enderecos/novo}">Cadastrar Endereço</a>
+
+    <!-- Formulário de pesquisa -->
+    <form class="form-inline mb-3" method="get" th:action="@{/site/cliente/enderecos}">
+        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Pesquisar</button>
+    </form>
+
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>CEP</th>
+            <th>Logradouro</th>
+            <th>Complemento</th>
+            <th>Bairro</th>
+            <th>Localidade</th>
+            <th>UF</th>
+            <th>Endereço Principal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(enderecos)}">
+            <td colspan="7" class="text-center">NENHUM ENDEREÇO CARREGADO</td>
+        </tr>
+        <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
+        <tr th:each="endereco : ${enderecos}">
+            <td th:text="${endereco.cep}"></td>
+            <td th:text="${endereco.logradouro}"></td>
+            <td th:text="${endereco.complemento}"></td>
+            <td th:text="${endereco.bairro}"></td>
+            <td th:text="${endereco.localidade}"></td>
+            <td th:text="${endereco.uf}"></td>
+            <td>
+                <th:block th:if="${endereco.enderecoPrincipal == true}">
+                    <span>Sim</span>
+                </th:block>
+                <th:block th:if="${endereco.enderecoPrincipal == false}">
+                    <span>Não</span>
+                </th:block>
+            </td>
+            <!-- Coluna de ações -->
+            <td>
+                <form th:action="@{'/site/cliente/enderecos/desativar/' + ${endereco.id}}" method="post" onsubmit="return excluirEndereco()" style="display: inline">
+                    <button type="submit" class="btn btn-warning btn-sm">Excluir endereço</button>
+                </form>
+                <form th:action="@{'/site/cliente/enderecos/principal/' + ${endereco.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                    <button type="submit" class="btn btn-warning btn-sm">
+                        <th:block th:if="${endereco.enderecoPrincipal == true}">
+                            Remover status principal
+                        </th:block>
+                        <th:block th:if="${endereco.enderecoPrincipal == false}">
+                            Alterar para principal
+                        </th:block>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+<script>
+    function confirmarMudancaStatus() {
+        return confirm("Tem certeza que deseja mudar o status do endereço selecionado?")
+    }
+    function excluirEndereco() {
+        return confirm("Tem certeza que deseja excluir o endereço?")
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>
