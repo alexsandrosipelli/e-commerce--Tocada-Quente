@@ -69,7 +69,7 @@
                         <a class="nav-link" href="#" th:href="@{/site/cliente/}">Faça login/Crie seu login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/carrinhoDeCompras/}">
+                        <a class="nav-link" th:href="@{/site/carrinhoDeCompras/}">
                             <i class="bi bi-cart-fill"></i>
                         </a>
                     </li>
@@ -119,7 +119,7 @@
                     <h4>Descrição:</h4>
                     <p class="lead" th:text=" ${produtoDTO.descricaoDetalhada}"></p>
 
-                    <a class="nav-link" href="@{/site/{id}(id=${produto.id})}">
+                    <a class="nav-link" th:href="@{/site/carrinhoDeCompras/adicionar/{id}(id=${produtoDTO.id})}">
                         <i class="bi bi-cart-fill"></i> Comprar
                     </a>
                     <a class="nav-link" th:href="@{/site/}">

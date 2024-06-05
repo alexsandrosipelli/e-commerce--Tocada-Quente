@@ -25,7 +25,8 @@
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="dataNascimento">Data de Nascimento</label>
-                                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" th:field="*{dataNascimento}" >
+                                <input type="date" class="form-control" th:errorclass="is-invalid" id="dataNascimento" name="dataNascimento" th:field="*{dataNascimento}" >
+                                <div class="invalid-feedback" th:errors="*{dataNascimento}"></div>
                             </div>
                         </div>
                         <div class="row">

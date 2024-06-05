@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,6 +137,10 @@ public class ClienteServiceImpl implements ClienteService {
             result.rejectValue("complemento", "complemento.empty", "O campo complemento não pode estar em branco.");
         }
 
+        if (validacaoDataNascimento(clienteDTO)){
+            result.rejectValue("dataNascimento", "dataNascimento.invalid", "Não é possível colocar uma data futura.");
+        }
+
         return result.hasErrors();
     }
 
@@ -143,8 +148,9 @@ public class ClienteServiceImpl implements ClienteService {
     public String editarCliente(HttpSession session, Model model) {
         ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
         if (clienteLogado != null){
+            ClienteEntity clienteBanco = clienteRepository.findByEmail(clienteLogado.getEmail());
             String dataFormatada = formatarDataNascimento(clienteLogado.getDataNascimento());
-            ClienteDTO clienteDTO = modelMapper.map(clienteLogado, ClienteDTO.class);
+            ClienteDTO clienteDTO = modelMapper.map(clienteBanco, ClienteDTO.class);
             clienteDTO.setDataNascimento(dataFormatada);
             clienteDTO.setCep(null);
             clienteDTO.setLocalidade(null);
@@ -168,7 +174,7 @@ public class ClienteServiceImpl implements ClienteService {
         if (clienteLogado != null){
             Optional<ClienteEntity> clienteBase = clienteRepository.findById(clienteLogado.getId());
             if (clienteBase.isPresent()){
-                validarSenhaEditar(clienteDTO, result);
+                validarCamposEdicao(clienteDTO, result);
                 if (result.hasErrors()){
                     return "editar-cliente";
                 }else{
@@ -185,10 +191,22 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
-    private void validarSenhaEditar(ClienteDTO clienteDTO, BindingResult result) {
+    private void validarCamposEdicao(ClienteDTO clienteDTO, BindingResult result) {
         if (!clienteDTO.getSenha().isEmpty() && clienteDTO.getSenha().length() <= 3){
                 result.rejectValue("senha", "senha.length.invalid", "A senha deve ser maior que 3 caracteres.");
-            }
+        }
+
+        if (validacaoDataNascimento(clienteDTO)){
+            result.rejectValue("dataNascimento", "dataNascimento.invalid", "Não é possível colocar uma data futura.");
+        }
+    }
+
+    private boolean validacaoDataNascimento(ClienteDTO clienteDTO) {
+        DateTimeFormatter formatterEntrada = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate dataFormatada = LocalDate.parse(clienteDTO.getDataNascimento().replace("-", ""), formatterEntrada);
+        LocalDate dataAtual = LocalDate.now();
+
+        return dataFormatada.isAfter(dataAtual);
     }
 
     @Override

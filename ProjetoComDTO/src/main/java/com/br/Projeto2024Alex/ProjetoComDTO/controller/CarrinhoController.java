@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author hiago
  */
 @Controller
-@RequestMapping("/carrinhoDeCompras")
+@RequestMapping("/site/carrinhoDeCompras")
 public class CarrinhoController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarrinhoController.class);
@@ -95,7 +95,7 @@ public class CarrinhoController {
             LOGGER.error("Produto com id {} não encontrado.", id);
         }
 
-        return "redirect:/carrinhoDeCompras/";
+        return "redirect:/site/carrinhoDeCompras/";
     }
 
     @GetMapping("/alterarQuantidade/{id}/{acao}")
@@ -114,7 +114,7 @@ public class CarrinhoController {
             }
         }
 
-        return "redirect:/carrinhoDeCompras/";
+        return "redirect:/site/carrinhoDeCompras/";
     }
 
     @GetMapping("/removerProduto/{id}")
@@ -128,7 +128,7 @@ public class CarrinhoController {
             }
         }
 
-        return "redirect:/carrinhoDeCompras/";
+        return "redirect:/site/carrinhoDeCompras/";
     }
 
 }
