@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Forma de Pagamento</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .payment-option {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Escolha a Forma de Pagamento</h1>
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card payment-option" onclick="selectPaymentOption('cartao_credito')">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cartão de Crédito</h5>
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Cartão de Crédito">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card payment-option" onclick="selectPaymentOption('cartao_debito')">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cartão de Débito</h5>
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Cartão de Débito">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card payment-option" onclick="selectPaymentOption('dinheiro')">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Dinheiro</h5>
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Dinheiro">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-5 text-center">
+        <button id="confirmButton" class="btn btn-primary" onclick="confirmPayment()" disabled>Confirmar Pagamento</button>
+    </div>
+</div>
+
+<script>
+    let selectedPaymentOption = null;
+
+    function selectPaymentOption(option) {
+        selectedPaymentOption = option;
+        document.querySelectorAll('.payment-option').forEach(card => {
+            card.classList.remove('border-primary');
+        });
+        document.querySelectorAll('.payment-option').forEach(card => {
+            if(card.onclick.toString().includes(option)){
+                card.classList.add('border-primary');
+            }
+        });
+        document.getElementById('confirmButton').disabled = false;
+    }
+
+    function confirmPayment() {
+        if (selectedPaymentOption) {
+            alert("Você selecionou: " + selectedPaymentOption.replace('_', ' '));
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

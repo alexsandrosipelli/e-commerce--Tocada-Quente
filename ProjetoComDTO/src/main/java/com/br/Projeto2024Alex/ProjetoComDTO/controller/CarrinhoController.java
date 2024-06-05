@@ -12,6 +12,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.CarrinhoServiceImpl;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,106 +32,39 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/site/carrinhoDeCompras")
 public class CarrinhoController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarrinhoController.class);
+    private CarrinhoServiceImpl carrinhoService;
 
-    private List<ItemCompraEntity> itemCompra = new ArrayList<>();
-    private CompraEntity compra = new CompraEntity();
-
-    private void calcularTotal() {
-        // Inicializa o valor total como BigDecimal zero.
-        BigDecimal total = BigDecimal.ZERO;
-
-        // Itera sobre os itens da compra.
-        for (ItemCompraEntity it : itemCompra) {
-            // Soma o valor total do item ao total.
-            total = total.add(it.getValorTotal());
-        }
-
-        // Define o valor total na compra.
-        compra.setValorTotal(total);
-    }
+    private ProdutoRepository produtoRepository;
 
     @Autowired
-    private ProdutoRepository produtoRepository;
+    public CarrinhoController(CarrinhoServiceImpl carrinhoService, ProdutoRepository produtoRepository) {
+        this.carrinhoService = carrinhoService;
+        this.produtoRepository = produtoRepository;
+    }
 
     @GetMapping("/")
     public ModelAndView chamarCarrinho() {
-        ModelAndView mv = new ModelAndView("carrinho");
-        calcularTotal();
-        mv.addObject("compra", compra);
-        mv.addObject("listaItens", itemCompra);
-        return mv;
+        return carrinhoService.carrinhoExibir();
     }
 
     @GetMapping("/adicionar/{id}")
     public String adicionarCarrinho(@PathVariable Long id) {
-        LOGGER.info("Chamando o método adicionarCarrinho() para o id: {}", id);
-
-        Optional<ProdutoEntity> produtoOpt = produtoRepository.findById(id);
-
-        if (produtoOpt.isPresent()) {
-            ProdutoEntity prod = produtoOpt.get();
-            LOGGER.info("Produto encontrado: {}", prod);
-
-            int controle = 0;
-            for (ItemCompraEntity it : itemCompra) {
-                if (it.getProdutoEntity().getId().equals(prod.getId())) {
-                    LOGGER.info("Produto já existe no carrinho. Atualizando a quantidade.");
-                    it.setQuantidade(it.getQuantidade() + 1);
-                    it.calcularValorTotal();
-                    controle = 1;
-                    break;
-                }
-            }
-
-            if (controle == 0) {
-                LOGGER.info("Produto não encontrado no carrinho. Adicionando um novo item.");
-                ItemCompraEntity item = new ItemCompraEntity();
-                item.setProdutoEntity(prod);
-                item.setValorUnitario(prod.getPrecoProduto());
-                item.setQuantidade(1); // Inicializa a quantidade como 1 para um novo item
-                item.calcularValorTotal();
-                itemCompra.add(item);
-            }
-
-        } else {
-            LOGGER.error("Produto com id {} não encontrado.", id);
-        }
-
-        return "redirect:/site/carrinhoDeCompras/";
+        return carrinhoService.adicionarItemCarrinho(id);
     }
 
     @GetMapping("/alterarQuantidade/{id}/{acao}")
     public String alterarQuantidade(@PathVariable Long id, @PathVariable Integer acao) {
-
-        for (ItemCompraEntity it : itemCompra) {
-            if (it.getProdutoEntity().getId().equals(id)) {
-                if (acao == 1) {
-                    it.setQuantidade(it.getQuantidade() + 1);
-                    it.calcularValorTotal();
-                } else if (acao == 0) {
-                    it.setQuantidade(it.getQuantidade() - 1);
-                    it.calcularValorTotal();
-                }
-                break;
-            }
-        }
-
-        return "redirect:/site/carrinhoDeCompras/";
+        return carrinhoService.editarQuantidade(id, acao);
     }
 
     @GetMapping("/removerProduto/{id}")
     public String removerProduto(@PathVariable Long id) {
+        return carrinhoService.removerProduto(id);
+    }
 
-        for (ItemCompraEntity it : itemCompra) {
-            if (it.getProdutoEntity().getId().equals(id)) {
-                itemCompra.remove(it);
-                it.calcularValorTotal();
-                break;
-            }
-        }
-
-        return "redirect:/site/carrinhoDeCompras/";
+    @GetMapping("/pagamento")
+    public String adicionarFormaPagamento(ModelAndView modelAndView, HttpSession session){
+        return carrinhoService.adicionarMetoPagamento(modelAndView, session);
     }
 
 }
