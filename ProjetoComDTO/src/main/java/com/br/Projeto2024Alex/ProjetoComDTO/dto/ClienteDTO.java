@@ -38,6 +38,7 @@ public class ClienteDTO {
 
     public ClienteEntity toEntity() {
         ClienteEntity clienteEntity = new ClienteEntity();
+        clienteEntity.setId(this.getId());
         clienteEntity.setNome(this.getNome());
         clienteEntity.setDataNascimento(this.getDataNascimento());
         clienteEntity.setGenero(this.getGenero());

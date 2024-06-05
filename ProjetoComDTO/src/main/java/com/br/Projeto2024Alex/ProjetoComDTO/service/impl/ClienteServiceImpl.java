@@ -168,6 +168,7 @@ public class ClienteServiceImpl implements ClienteService {
         if (clienteLogado != null){
             Optional<ClienteEntity> clienteBase = clienteRepository.findById(clienteLogado.getId());
             if (clienteBase.isPresent()){
+                validarSenhaEditar(clienteDTO, result);
                 if (result.hasErrors()){
                     return "editar-cliente";
                 }else{
@@ -182,6 +183,12 @@ public class ClienteServiceImpl implements ClienteService {
         }else{
             return "redirect:/site/cliente/";
         }
+    }
+
+    private void validarSenhaEditar(ClienteDTO clienteDTO, BindingResult result) {
+        if (!clienteDTO.getSenha().isEmpty() && clienteDTO.getSenha().length() <= 3){
+                result.rejectValue("senha", "senha.length.invalid", "A senha deve ser maior que 3 caracteres.");
+            }
     }
 
     @Override

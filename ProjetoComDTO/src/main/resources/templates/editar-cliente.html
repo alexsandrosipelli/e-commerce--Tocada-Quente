@@ -40,7 +40,8 @@
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="senha">Senha</label>
-                                <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
+                                <input type="password" class="form-control" th:errorclass="is-invalid" id="senha" name="senha" placeholder="Digite sua senha" th:field="*{senha}" >
+                                <div class="invalid-feedback" th:errors="*{senha}"></div>
                             </div>
                         </div>
                         <!-- Adicione os campos para endereços de faturamento e entrega aqui -->
