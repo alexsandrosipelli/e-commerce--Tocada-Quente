@@ -24,4 +24,6 @@ public interface EnderecoEntregaRepository extends JpaRepository<EnderecoEntrega
     void deleteByComplementoStartingWithEntregaTeste();
 
     List<EnderecoEntregaEntity> findByCliente_IdAndStatus(Long id, boolean status);
+
+    EnderecoEntregaEntity findByCliente_IdAndEnderecoPrincipalTrue(Long id);
 }

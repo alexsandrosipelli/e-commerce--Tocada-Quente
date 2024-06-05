@@ -4,6 +4,8 @@
  */
 package com.br.Projeto2024Alex.ProjetoComDTO.controller;
 
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.ProdutoDTO;
+import com.br.Projeto2024Alex.ProjetoComDTO.entity.ClienteEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.CompraEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ItemCompraEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
@@ -14,12 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.CarrinhoServiceImpl;
+import com.br.Projeto2024Alex.ProjetoComDTO.service.impl.ProdutoServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +37,13 @@ public class CarrinhoController {
     private CarrinhoServiceImpl carrinhoService;
 
     private ProdutoRepository produtoRepository;
+    private ProdutoServiceImpl produtoService;
 
     @Autowired
-    public CarrinhoController(CarrinhoServiceImpl carrinhoService, ProdutoRepository produtoRepository) {
+    public CarrinhoController(CarrinhoServiceImpl carrinhoService, ProdutoRepository produtoRepository, ProdutoServiceImpl produtoService) {
         this.carrinhoService = carrinhoService;
         this.produtoRepository = produtoRepository;
+      this.produtoService = produtoService;
     }
 
     @GetMapping("/")
@@ -66,5 +70,32 @@ public class CarrinhoController {
     public String adicionarFormaPagamento(ModelAndView modelAndView, HttpSession session){
         return carrinhoService.adicionarMetoPagamento(modelAndView, session);
     }
+
+    @PostMapping("/finalizar-compra/{indexPagamento}")
+    public String finalizarCompra(@RequestParam("indexPagamento") String opcaoPagamento, Model model, HttpSession session){
+        return carrinhoService.finalizarCompra(opcaoPagamento, model, session);
+    }
+
+    @GetMapping("/retornar-site")
+    public String retornarTelaHome(HttpSession session, Model model){
+        ClienteEntity cliente = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (cliente != null) {
+            model.addAttribute("clienteLogado", cliente);
+        }
+        List<ProdutoDTO> produtos = produtoService.listarProdutos();
+
+        // Para cada produto na lista de produtos, define o caminho da imagem principal
+        produtos.forEach(produto -> produto.setImagemPrincipalString(produto.getImagemPrincipalStringIndex()));
+
+        model.addAttribute("produtos", produtos);
+
+        return "loja-apresentada";
+    }
+
+    @GetMapping("/compra-finalizada")
+    public String comprarFinalizada(Model model, HttpSession session){
+        return carrinhoService.compraFinalizada(model, session);
+    }
+
 
 }

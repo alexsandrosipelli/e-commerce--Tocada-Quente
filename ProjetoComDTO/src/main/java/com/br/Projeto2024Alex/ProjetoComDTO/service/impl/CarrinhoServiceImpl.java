@@ -1,9 +1,12 @@
 package com.br.Projeto2024Alex.ProjetoComDTO.service.impl;
 
 import com.br.Projeto2024Alex.ProjetoComDTO.controller.CarrinhoController;
+import com.br.Projeto2024Alex.ProjetoComDTO.dto.EnderecoEntregaDTO;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.*;
+import com.br.Projeto2024Alex.ProjetoComDTO.repository.EnderecoEntregaRepository;
 import com.br.Projeto2024Alex.ProjetoComDTO.service.CarrinhoService;
 import jakarta.servlet.http.HttpSession;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ItemCompraEntity;
 import com.br.Projeto2024Alex.ProjetoComDTO.entity.ProdutoEntity;
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +35,14 @@ public class CarrinhoServiceImpl implements CarrinhoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CarrinhoController.class);
     private List<ItemCompraEntity> itemCompra = new ArrayList<>();
     private CompraEntity compra = new CompraEntity();
+    private EnderecoEntregaRepository enderecoEntregaRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public CarrinhoServiceImpl(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
+    public CarrinhoServiceImpl(ProdutoRepository produtoRepository, EnderecoEntregaRepository enderecoEntregaRepository, ModelMapper modelMapper) {
+      this.produtoRepository = produtoRepository;
+      this.enderecoEntregaRepository = enderecoEntregaRepository;
+      this.modelMapper = modelMapper;
     }
 
     private void calcularTotal() {
@@ -132,7 +140,38 @@ public class CarrinhoServiceImpl implements CarrinhoService {
     public String adicionarMetoPagamento(ModelAndView modelAndView, HttpSession session) {
         ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
         if (clienteLogado != null){
+            EnderecoEntregaEntity endereco = enderecoEntregaRepository.findByCliente_IdAndEnderecoPrincipalTrue(clienteLogado.getId());
+            EnderecoEntregaDTO enderecoEntregaDTO = modelMapper.map(endereco, EnderecoEntregaDTO.class);
+            compra.setCliente(clienteLogado);
+            modelAndView.addObject("compra", compra);
+            modelAndView.addObject("endereco", enderecoEntregaDTO);
             return "pagamento";
+        }else{
+            return "redirect:/site/cliente/";
+        }
+    }
+
+    @Override
+    public String finalizarCompra(String opcaoPagamento, Model model, HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            EnderecoEntregaEntity endereco = enderecoEntregaRepository.findByCliente_IdAndEnderecoPrincipalTrue(clienteLogado.getId());
+            EnderecoEntregaDTO enderecoEntregaDTO = modelMapper.map(endereco, EnderecoEntregaDTO.class);
+            compra.setCliente(clienteLogado);
+            compra.setFormaPagamento(opcaoPagamento);
+            model.addAttribute("compra", compra);
+            model.addAttribute("endereco", enderecoEntregaDTO);
+            return "redirect:/site/carrinhoDeCompras/compra-finalizada";
+        }else{
+            return "redirect:/site/cliente/";
+        }
+    }
+
+    @Override
+    public String compraFinalizada(Model model, HttpSession session) {
+        ClienteEntity clienteLogado = (ClienteEntity) session.getAttribute("clienteLogado");
+        if (clienteLogado != null){
+            return "nota-fiscal";
         }else{
             return "redirect:/site/cliente/";
         }
