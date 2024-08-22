@@ -1,4 +1,11 @@
-# Projeto-Integrador-2024
-Projeto Integrador 2024
-O projeto é desenvolvido em grupo para treinar o aluno no exercício de uma profissão que é inerentemente colaborativa. O trabalho em grupo combina os talentos dos alunos para construir algo maior do que seria possível individualmente.
+E-Commerce Tocada Quente
+Descrição: O Tocada Quente é um e-commerce especializado em instrumentos musicais que conecta músicos e entusiastas a uma ampla gama de produtos. Este projeto foi desenvolvido em grupo para o curso de Análise e Desenvolvimento de Sistemas, com o objetivo de simular um ambiente de trabalho colaborativo e aplicar conhecimentos adquiridos em um contexto real.
 
+Autores: Este projeto foi desenvolvido por:
+
+Alexsandro Lopes Sipelli
+Danilo Ribeiro Cueto
+Gustavo Xavier
+Hiago Pereira dos Anjos
+Lucas Boni dos Santos
+Pablo Henrique Molina Nogueira Silva
